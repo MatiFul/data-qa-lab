@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.log
+
+.vscode/
+
+.env
+
+logs/
+tmp/
+temp/
+
+*.csv
+*.zip
