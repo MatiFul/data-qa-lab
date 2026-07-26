@@ -1,7 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS consumo;
 
-DROP TABLE IF EXISTS consumo.transacciones_consumo;
-CREATE TABLE consumo.transacciones_consumo (
+CREATE TABLE IF NOT EXISTS consumo.transacciones_consumo (
     id_transaccion INT NULL,
     id_cuenta INT NULL,
     id_canal INT NULL,

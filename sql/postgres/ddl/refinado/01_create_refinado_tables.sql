@@ -1,7 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS refinado;
 
-DROP TABLE IF EXISTS refinado.transacciones_refinado;
-CREATE TABLE refinado.transacciones_refinado (
+CREATE TABLE IF NOT EXISTS refinado.transacciones_refinado (
     id_transaccion INT NULL,
     id_cuenta INT NULL,
     id_canal INT NULL,
