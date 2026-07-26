@@ -1,7 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS raw;
 
-DROP TABLE IF EXISTS raw.clientes_raw;
-CREATE TABLE raw.clientes_raw (
+CREATE TABLE IF NOT EXISTS raw.clientes_raw (
     id_cliente INT NULL,
     nombre TEXT NULL,
     dni BIGINT NULL,
@@ -9,8 +8,7 @@ CREATE TABLE raw.clientes_raw (
     fecha_alta DATE NULL
 );
 
-DROP TABLE IF EXISTS raw.cuentas_raw;
-CREATE TABLE raw.cuentas_raw (
+CREATE TABLE IF NOT EXISTS raw.cuentas_raw (
     id_cuenta INT NULL,
     id_cliente INT NULL,
     tipo_cuenta TEXT NULL,
@@ -18,36 +16,31 @@ CREATE TABLE raw.cuentas_raw (
     fecha_alta DATE NULL
 );
 
-DROP TABLE IF EXISTS raw.productos_raw;
-CREATE TABLE raw.productos_raw (
+CREATE TABLE IF NOT EXISTS raw.productos_raw (
     id_producto INT NULL,
     nombre_producto TEXT NULL,
     categoria TEXT NULL,
     activo INT NULL
 );
 
-DROP TABLE IF EXISTS raw.estados_transaccion_raw;
-CREATE TABLE raw.estados_transaccion_raw (
+CREATE TABLE IF NOT EXISTS raw.estados_transaccion_raw (
     id_estado INT NULL,
     descripcion_estado TEXT NULL,
     es_final INT NULL
 );
 
-DROP TABLE IF EXISTS raw.canales_raw;
-CREATE TABLE raw.canales_raw (
+CREATE TABLE IF NOT EXISTS raw.canales_raw (
     id_canal INT NULL,
     descripcion_canal TEXT NULL
 );
 
-DROP TABLE IF EXISTS raw.sucursales_raw;
-CREATE TABLE raw.sucursales_raw (
+CREATE TABLE IF NOT EXISTS raw.sucursales_raw (
     id_sucursal INT NULL,
     nombre_sucursal TEXT NULL,
     provincia TEXT NULL
 );
 
-DROP TABLE IF EXISTS raw.transacciones_raw;
-CREATE TABLE raw.transacciones_raw (
+CREATE TABLE IF NOT EXISTS raw.transacciones_raw (
     id_transaccion INT NULL,
     id_cuenta INT NULL,
     id_canal INT NULL,
@@ -58,8 +51,7 @@ CREATE TABLE raw.transacciones_raw (
     fecha_proceso DATE NULL
 );
 
-DROP TABLE IF EXISTS raw.items_transaccion_raw;
-CREATE TABLE raw.items_transaccion_raw (
+CREATE TABLE IF NOT EXISTS raw.items_transaccion_raw (
     id_item INT NULL,
     id_transaccion INT NULL,
     id_producto INT NULL,

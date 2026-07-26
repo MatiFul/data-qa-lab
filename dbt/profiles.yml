@@ -1,0 +1,13 @@
+data_qa_lab:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('QA_DB_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('QA_DB_PORT', '5434') | int }}"
+      dbname: "{{ env_var('QA_DB_NAME', 'qa_lab') }}"
+      user: "{{ env_var('QA_DB_USER', 'qa_user') }}"
+      password: "{{ env_var('QA_DB_PASSWORD') }}"
+      schema: dbt
+      threads: 4
+      connect_timeout: 10

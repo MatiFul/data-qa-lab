@@ -88,13 +88,13 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 
 ## Fase 4 — Transformaciones con dbt
 
-- [ ] Inicializar el proyecto dbt.
-- [ ] Crear modelos `staging`.
-- [ ] Crear modelos analíticos `marts`.
-- [ ] Agregar pruebas estándar de dbt.
-- [ ] Crear pruebas SQL personalizadas.
-- [ ] Documentar modelos, columnas y linaje.
-- [ ] Ejecutar `dbt build` correctamente.
+- [x] Inicializar el proyecto dbt.
+- [x] Crear modelos `staging`.
+- [x] Crear modelos analíticos `marts`.
+- [x] Agregar pruebas estándar de dbt.
+- [x] Crear pruebas SQL personalizadas.
+- [x] Documentar modelos, columnas y linaje.
+- [x] Ejecutar `dbt build` correctamente.
 
 ## Fase 5 — Orquestación con Airflow
 
@@ -104,6 +104,7 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 - [x] Configurar dependencias del flujo.
 - [x] Simular y diagnosticar fallos.
 - [x] Incorporar controles de calidad como condición del pipeline.
+- [x] Integrar `dbt build` como gate previo a pytest.
 
 ## Fase 6 — Pruebas de API y web
 
@@ -174,7 +175,7 @@ La estrategia recomendada es recuperar, validar y extender esos repositorios. El
 |---|---|
 | Python del proyecto | Completado: `.venv` con Python 3.12.2. |
 | pytest del proyecto | Completado: pytest y psycopg aislados dentro de `.venv`. |
-| dbt Core | No está instalado; incorporarlo después de validar el lab existente. |
+| dbt Core | Instalado en `.venv`, versión 1.11.12, con adaptador PostgreSQL 1.11.0. |
 | Node.js y npm | No están instalados; serán necesarios para Playwright. |
 | Playwright | No está instalado. |
 | Postman | No se detectó instalado. |
@@ -686,6 +687,113 @@ anomalías refinadas controladas     200
 
 Los repositorios remotos ya existen, pero este primer ejercicio se mantiene local hasta revisar el historial final y decidir expresamente su publicación.
 
+## Incorporación de dbt — 26 de julio de 2026
+
+### Entorno y proyecto
+
+- [x] Instalar `dbt-core==1.11.12` dentro de `.venv`.
+- [x] Instalar `dbt-postgres==1.11.0`.
+- [x] Verificar dependencias con `pip check`.
+- [x] Mantener la contraseña fuera de los archivos versionados.
+- [x] Crear los esquemas aislados `dbt_staging` y `dbt_marts`.
+- [x] Excluir `target`, logs y paquetes descargados de Git.
+
+Modelos:
+
+```text
+dbt_staging.stg_transactions             vista
+dbt_staging.stg_transaction_items        vista
+dbt_marts.fct_transaction_quality        tabla, 4825 filas
+dbt_marts.mart_daily_quality             tabla, 90 filas
+```
+
+Pruebas:
+
+```text
+Pruebas estándar y personalizadas        33
+Modelos construidos                       4
+Fuentes declaradas                        2
+Resultado de dbt build                   PASS=37, ERROR=0
+```
+
+Las pruebas cubren claves, nulos, relaciones, valores aceptados, flags recalculados, reconciliación con `consumo` y una tasa máxima configurable de inconsistencias.
+
+### Hallazgo de integración
+
+La primera corrida integrada detectó un defecto real de diseño:
+
+```text
+DAG run:
+dbt_integration_validation_20260726T1529Z
+
+Problema:
+el DDL intentaba borrar curado.transacciones_curado
+
+Impacto:
+PostgreSQL bloqueó el DROP porque la vista dbt_staging.stg_transactions
+dependía de esa tabla
+```
+
+La corrección reemplazó los `DROP TABLE` por `CREATE TABLE IF NOT EXISTS` en las cuatro capas. Las transformaciones continúan usando `TRUNCATE`, por lo que los datos se refrescan sin destruir las tablas ni romper sus dependencias.
+
+### Integración estable en Airflow
+
+```text
+DAG run:
+dbt_integration_recovery_20260726T1532Z
+
+Estado:
+success
+
+Tareas:
+11 de 11 en success
+
+dbt:
+PASS=37, WARN=0, ERROR=0
+
+pytest:
+19 passed, 4 xfailed
+```
+
+Flujo final:
+
+```text
+crear tablas idempotentes
+    ↓
+cargar y transformar datos
+    ↓
+dbt build
+    ↓
+pytest quality gate
+```
+
+### Simulación y recuperación
+
+```text
+Corrida fallida:
+dbt_gate_failure_20260726T1534Z
+
+Umbral temporal:
+1 %
+
+Resultado:
+run_dbt_build failed
+run_pytest_quality_gate upstream_failed
+```
+
+La prueba `assert_inconsistency_rate_below_threshold` bloqueó correctamente la ejecución. Después se restauró el umbral normal:
+
+```text
+Corrida recuperada:
+dbt_gate_recovery_20260726T1536Z
+
+Umbral:
+5 %
+
+Resultado:
+11 de 11 tareas en success
+```
+
 ## Próximo paso
 
-El dataset, la transformación, pytest y su integración con Airflow ya están estabilizados. La simulación de fallo y la recuperación quedaron completadas. El próximo paso debe elegirse entre iniciar el versionado práctico con Git o incorporar dbt; la recomendación es ordenar y versionar primero el trabajo actual. OpenMetadata debe detenerse cuando no se practique catálogo o lineage porque el stack completo consume varios GB de RAM.
+El núcleo de datos ya incluye PostgreSQL, transformaciones idempotentes, dbt, pytest y Airflow con dos quality gates. El próximo bloque recomendado es generar reportes persistentes, automatizar `dbt build` y pytest mediante GitHub Actions y terminar el README de portfolio. OpenMetadata debe detenerse cuando no se practique catálogo o lineage porque el stack completo consume varios GB de RAM.

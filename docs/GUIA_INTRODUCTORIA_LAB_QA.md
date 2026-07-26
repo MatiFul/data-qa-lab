@@ -238,7 +238,7 @@ OpenMetadata observa y documenta. Airflow ejecuta. PostgreSQL almacena. Son func
 
 Git no es lo mismo que GitHub. Git funciona localmente; GitHub es un servicio que aloja repositorios Git y agrega colaboración y automatización.
 
-## 5. Herramientas que incorporaremos después
+## 5. Herramientas incorporadas y próximas
 
 ### dbt Core
 
@@ -246,7 +246,7 @@ Git no es lo mismo que GitHub. Git funciona localmente; GitHub es un servicio qu
 
 **Qué es:** organiza transformaciones SQL como modelos versionados y permite agregar pruebas y documentación.
 
-**Para qué lo usaremos:** reemplazar progresivamente SQL suelto por modelos, dependencias y tests mantenibles.
+**Para qué lo usamos:** crear vistas de preparación y tablas analíticas, declarar sus dependencias y ejecutar 33 pruebas antes de permitir que el pipeline continúe.
 
 **Para qué más se usa:** data warehouses, documentación, lineage y CI/CD de transformaciones.
 
@@ -307,12 +307,13 @@ Un ciclo completo puede verse así:
 1. Docker Compose inicia PostgreSQL y Airflow.
 2. Airflow ejecuta SQL para cargar RAW.
 3. Airflow ejecuta las transformaciones hacia curado, refinado y consumo.
-4. pytest se conecta a PostgreSQL mediante psycopg.
-5. Cada prueba ejecuta una consulta y compara el resultado con una regla.
-6. Si una regla falla, DBeaver ayuda a investigar las filas involucradas.
-7. OpenMetadata muestra las tablas, columnas y relaciones de lineage.
-8. Power BI consulta la capa de consumo.
-9. Git registra los cambios realizados en pruebas y transformaciones.
+4. dbt construye `dbt_staging` y `dbt_marts` y ejecuta sus pruebas.
+5. pytest se conecta a PostgreSQL mediante psycopg.
+6. Cada prueba ejecuta una consulta y compara el resultado con una regla.
+7. Si una regla falla, DBeaver ayuda a investigar las filas involucradas.
+8. OpenMetadata muestra las tablas, columnas y relaciones de lineage.
+9. Power BI consulta la capa de consumo.
+10. Git registra los cambios realizados en pruebas y transformaciones.
 10. GitHub Actions podrá repetir las pruebas automáticamente.
 
 Ejemplo de una regla:
@@ -421,8 +422,8 @@ En un trabajo real, cada `xfail` debería estar relacionado con un ticket, una d
 6. Investigar un `xfail` en DBeaver.
 7. Revisar el DAG y entender el orden del pipeline.
 8. Abrir OpenMetadata y observar tablas y lineage.
-9. Incorporar dbt.
-10. Agregar API, Postman, interfaz web y Playwright.
+9. Revisar los modelos y pruebas dbt.
+10. Agregar CI/CD y luego evaluar API, Postman, interfaz web y Playwright.
 
 No hace falta dominar todas las herramientas al mismo tiempo. Para empezar, el núcleo práctico es:
 
@@ -434,7 +435,7 @@ Airflow básico
 Git básico
 ```
 
-OpenMetadata, dbt, Postman, Playwright, Power BI y CI/CD se agregan cuando el flujo principal ya se entiende.
+Postman, Playwright, Power BI y CI/CD se agregan cuando el flujo principal ya se entiende.
 
 ## 11. Explicación corta del laboratorio
 
