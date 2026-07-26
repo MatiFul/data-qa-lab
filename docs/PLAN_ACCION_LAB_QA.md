@@ -670,6 +670,22 @@ consumo.transacciones_consumo      4825
 anomalías refinadas controladas     200
 ```
 
+## Primer flujo de versionado Git — 26 de julio de 2026
+
+- [x] Conservar `data-qa-lab` y `airflow-lab` como repositorios separados.
+- [x] Verificar identidad Git, ramas, remotos e historial.
+- [x] Crear `feature/data-quality-foundation`.
+- [x] Crear `feature/airflow-quality-gate`.
+- [x] Separar generador, transformación, pruebas, documentación, imagen y DAG en commits coherentes.
+- [x] Revisar el área de preparación antes de cada commit.
+- [x] Ejecutar pytest y validar Airflow antes de fusionar.
+- [x] Fusionar las ramas estables a `main` mediante commits de merge.
+- [x] Agregar `docs/GUIA_GIT.md`.
+- [ ] Publicar los nuevos commits en GitHub.
+- [ ] Incorporar GitHub Actions en una etapa posterior.
+
+Los repositorios remotos ya existen, pero este primer ejercicio se mantiene local hasta revisar el historial final y decidir expresamente su publicación.
+
 ## Próximo paso
 
 El dataset, la transformación, pytest y su integración con Airflow ya están estabilizados. La simulación de fallo y la recuperación quedaron completadas. El próximo paso debe elegirse entre iniciar el versionado práctico con Git o incorporar dbt; la recomendación es ordenar y versionar primero el trabajo actual. OpenMetadata debe detenerse cuando no se practique catálogo o lineage porque el stack completo consume varios GB de RAM.
