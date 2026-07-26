@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: curado
+    description: Capa limpia producida por el pipeline PostgreSQL existente.
+    schema: curado
+    tables:
+      - name: transacciones_curado
+        description: Cabecera de transacciones aceptadas por las reglas de curado.
+        columns:
+          - name: id_transaccion
+            data_tests:
+              - not_null
+              - unique
+          - name: monto
+            data_tests:
+              - not_null
+      - name: items_transaccion_curado
+        description: Detalle válido de productos asociado a las transacciones curadas.
+        columns:
+          - name: id_item
+            data_tests:
+              - not_null
+              - unique
+          - name: id_transaccion
+            data_tests:
+              - not_null

@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: fct_transaction_quality
+    description: Hechos transaccionales con métricas y flags de calidad recalculados por dbt.
+    columns:
+      - name: transaction_id
+        data_tests:
+          - not_null
+          - unique
+      - name: transaction_amount
+        data_tests:
+          - not_null
+      - name: calculated_item_amount
+        data_tests:
+          - not_null
+      - name: item_count
+        data_tests:
+          - not_null
+      - name: has_no_items_flag
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: inconsistent_amount_flag
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+  - name: mart_daily_quality
+    description: Resumen diario para monitorear volumen, montos y anomalías.
+    columns:
+      - name: transaction_date
+        data_tests:
+          - not_null
+          - unique
+      - name: transaction_count
+        data_tests:
+          - not_null
+      - name: inconsistency_rate
+        data_tests:
+          - not_null

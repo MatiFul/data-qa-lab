@@ -6,6 +6,9 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
+target/
+dbt_packages/
+.user.yml
 
 .vscode/
 
