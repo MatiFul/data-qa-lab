@@ -12,6 +12,9 @@ Este laboratorio es un proyecto práctico de Data QA para entornos enterprise. S
 - Docker
 - PostgreSQL
 - Python
+- pytest
+- DBeaver
+- Visual Studio Code
 
 ## Arquitectura
 
@@ -108,11 +111,16 @@ No es objetivo actual profundizar en:
 
 ## Estado actual
 
-- Hay un pipeline Airflow básico definido en `airflow-lab/dags/qa_pipeline_v1.py`.
-- Existen scripts de generación de datasets en `data-qa-lab/data_generator/generate_dataset.py`.
-- El proyecto cuenta con DDL de tablas y checks de calidad para las capas `raw`, `curado` y `refinado`.
+- El pipeline PostgreSQL vigente es `airflow-lab/dags/qa_pipeline_postgres_v1.py`.
+- El generador crea un dataset reproducible con anomalías controladas.
+- Las dependencias del generador están registradas en `requirements-generator.txt`.
+- El flujo PostgreSQL utiliza las capas `raw`, `curado`, `refinado` y `consumo`.
+- Las nueve tareas del DAG fueron validadas en `success`.
+- La suite pytest contiene 23 pruebas: 19 aprobadas y 4 anomalías esperadas.
+- Airflow ejecuta pytest como gate final del DAG PostgreSQL.
 - La infraestructura incluye soporte Docker para los servicios principales.
-- El enfoque actual es funcionalidad local / laboratorio, sin despliegue Kubernetes ni CI/CD establecido.
+- OpenMetadata conserva el catálogo y lineage del laboratorio.
+- El enfoque actual es funcionalidad local, sin Kubernetes ni CI/CD establecido.
 
 ## Aprendizajes importantes
 
@@ -128,8 +136,16 @@ Sin este componente:
 
 Esto fue uno de los primeros problemas reales resueltos del laboratorio.
 
+## Documentación
+
+- `docs/GUIA_INTRODUCTORIA_LAB_QA.md`: introducción al laboratorio y sus herramientas.
+- `docs/PLAN_ACCION_LAB_QA.md`: avance y próximos pasos.
+- `docs/REGISTRO_DEFECTOS_LAB_QA.md`: defectos, evidencia y recuperación.
+- `docs/GUIA_GIT.md`: flujo de versionado utilizado en el laboratorio.
+
 ## Próximos pasos
 
-1. Integrar ejecución real de SQL desde Airflow hacia StarRocks.
-2. Añadir más QA checks de negocio y controles relacionales entre capas.
-3. Mejorar la documentación de Airflow y los hooks/conexiones necesarias.
+1. Incorporar dbt para organizar modelos y pruebas SQL.
+2. Agregar una API mínima y pruebas con Postman y pytest.
+3. Incorporar una interfaz web y Playwright.
+4. Ejecutar la suite desde GitHub Actions.
