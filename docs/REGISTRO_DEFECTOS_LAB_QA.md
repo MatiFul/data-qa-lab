@@ -343,3 +343,37 @@ Detalle: 10 de 10 tareas en success
 ```
 
 Los conteos finales permanecieron en 5000 transacciones RAW, 12000 ítems RAW, 4825 transacciones en las capas curada, refinada y consumo, y 200 inconsistencias controladas.
+
+## DQA-006 — El DDL destruía estructuras con dependencias
+
+**Regla:** una ejecución repetida del pipeline no debe destruir tablas ni invalidar modelos analíticos dependientes.
+
+**Detección:** primera corrida de Airflow después de incorporar dbt:
+
+```text
+dbt_integration_validation_20260726T1529Z
+```
+
+**Error observado:**
+
+```text
+cannot drop table curado.transacciones_curado because other objects depend on it
+view dbt_staging.stg_transactions depends on table curado.transacciones_curado
+```
+
+**Causa:** los archivos DDL ejecutaban `DROP TABLE` y `CREATE TABLE` en cada corrida. Esto funcionaba mientras no existían consumidores persistentes, pero dejó de ser válido cuando dbt creó vistas sobre la capa curada.
+
+**Corrección:** cambiar los DDL de `raw`, `curado`, `refinado` y `consumo` a `CREATE TABLE IF NOT EXISTS`. Las tareas de carga y transformación conservan sus `TRUNCATE`, por lo que refrescan los datos sin eliminar las estructuras.
+
+**Validación:**
+
+```text
+dbt_integration_recovery_20260726T1532Z
+11 de 11 tareas en success
+dbt PASS=37, ERROR=0
+pytest 19 passed, 4 xfailed
+```
+
+**Estado:** cerrado.
+
+Este defecto es un ejemplo de impacto por dependencia: un componente nuevo y correcto —dbt— reveló que una decisión histórica del pipeline no era idempotente ni segura para consumidores posteriores.

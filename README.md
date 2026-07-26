@@ -76,7 +76,6 @@ No es objetivo actual profundizar en:
 - Kubernetes
 - CI/CD
 - despliegues cloud
-- dbt
 - arquitecturas distribuidas complejas
 
 
@@ -115,9 +114,10 @@ No es objetivo actual profundizar en:
 - El generador crea un dataset reproducible con anomalías controladas.
 - Las dependencias del generador están registradas en `requirements-generator.txt`.
 - El flujo PostgreSQL utiliza las capas `raw`, `curado`, `refinado` y `consumo`.
-- Las nueve tareas del DAG fueron validadas en `success`.
+- dbt crea dos vistas `staging`, dos tablas `marts` y ejecuta 33 pruebas.
+- Las once tareas del DAG fueron validadas en `success`.
 - La suite pytest contiene 23 pruebas: 19 aprobadas y 4 anomalías esperadas.
-- Airflow ejecuta pytest como gate final del DAG PostgreSQL.
+- Airflow ejecuta `dbt build` y luego pytest como gates del DAG PostgreSQL.
 - La infraestructura incluye soporte Docker para los servicios principales.
 - OpenMetadata conserva el catálogo y lineage del laboratorio.
 - El enfoque actual es funcionalidad local, sin Kubernetes ni CI/CD establecido.
@@ -136,6 +136,17 @@ Sin este componente:
 
 Esto fue uno de los primeros problemas reales resueltos del laboratorio.
 
+### dbt local
+
+Definir la contraseña únicamente en la terminal y ejecutar:
+
+```powershell
+$env:QA_DB_PASSWORD="<contraseña local>"
+.\.venv\Scripts\dbt.exe build --project-dir dbt --profiles-dir dbt
+```
+
+El proyecto crea objetos únicamente en `dbt_staging` y `dbt_marts`. Los artefactos temporales de `dbt/target` no se versionan.
+
 ## Documentación
 
 - `docs/GUIA_INTRODUCTORIA_LAB_QA.md`: introducción al laboratorio y sus herramientas.
@@ -145,7 +156,7 @@ Esto fue uno de los primeros problemas reales resueltos del laboratorio.
 
 ## Próximos pasos
 
-1. Incorporar dbt para organizar modelos y pruebas SQL.
-2. Agregar una API mínima y pruebas con Postman y pytest.
-3. Incorporar una interfaz web y Playwright.
-4. Ejecutar la suite desde GitHub Actions.
+1. Generar reportes persistentes de pytest y dbt.
+2. Ejecutar la suite desde GitHub Actions.
+3. Completar el README orientado a portfolio.
+4. Evaluar una segunda etapa con API, Postman, interfaz web y Playwright.
