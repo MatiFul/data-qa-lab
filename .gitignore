@@ -16,6 +16,7 @@ dbt_packages/
 
 logs/
 backups/
+reports/
 tmp/
 temp/
 
