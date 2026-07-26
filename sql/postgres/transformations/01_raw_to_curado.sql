@@ -130,6 +130,7 @@ INNER JOIN curado.canales_curado ca
 INNER JOIN curado.estados_transaccion_curado e
     ON r.id_estado = e.id_estado
 WHERE r.monto IS NOT NULL
+  AND r.monto >= 0
   AND r.fecha_transaccion IS NOT NULL
   AND r.fecha_proceso IS NOT NULL;
 
