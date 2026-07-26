@@ -26,8 +26,8 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 - [x] Definir un caso de uso inicial: ventas, clientes, productos, pedidos y pagos.
 - [x] Revisar el entorno local y las herramientas disponibles.
 - [x] Confirmar la arquitectura definitiva.
-- [ ] Extender y actualizar el laboratorio existente.
-- [ ] Completar las prácticas y documentación de portfolio.
+- [x] Extender y actualizar el laboratorio existente.
+- [x] Completar el núcleo práctico y la documentación de portfolio de la versión 1.
 
 ## Fase 0 — Relevamiento del entorno
 
@@ -64,7 +64,7 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 - [x] Intentar extraer la metadata mediante recuperación controlada de InnoDB.
 - [x] Recrear MySQL y Elasticsearch de OpenMetadata sólo después de preservar lo recuperable.
 - [x] Verificar servidor, UI, servicio PostgreSQL, ingestion y lineage de OpenMetadata.
-- [ ] Documentar inicio, detención y reinicio del laboratorio.
+- [x] Documentar inicio, detención y reinicio del laboratorio.
 - [ ] Verificar que otra persona pueda reproducir el entorno.
 
 ## Fase 2 — Aplicación bajo prueba
@@ -81,10 +81,10 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 - [x] Configurar la conexión de pruebas a PostgreSQL.
 - [x] Validar valores nulos, duplicados y dominios.
 - [x] Validar integridad referencial.
-- [ ] Validar totales de pedidos y pagos.
+- [x] Validar totales de transacciones e ítems.
 - [x] Implementar reconciliaciones entre origen y destino.
 - [x] Crear pruebas de regresión.
-- [ ] Generar reportes de ejecución.
+- [x] Generar reportes de ejecución.
 
 ## Fase 4 — Transformaciones con dbt
 
@@ -117,20 +117,20 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 
 ## Fase 7 — CI/CD
 
-- [ ] Preparar comandos únicos para cada conjunto de pruebas.
-- [ ] Crear el workflow de GitHub Actions.
+- [x] Preparar un comando único para dbt y pytest.
+- [x] Crear el workflow de GitHub Actions.
 - [ ] Ejecutar pruebas en cada cambio.
 - [ ] Publicar reportes o artefactos de prueba.
-- [ ] Verificar que una falla de calidad bloquee el pipeline.
+- [x] Verificar localmente que una falla de calidad bloquee el pipeline.
 
 ## Fase 8 — BI, metadatos y portfolio
 
 - [ ] Conectar Power BI a los modelos analíticos.
 - [ ] Validar métricas y agregaciones contra SQL.
-- [ ] Integrar OpenMetadata si aporta valor al laboratorio.
-- [ ] Documentar casos de prueba.
-- [ ] Documentar defectos encontrados y evidencia.
-- [ ] Crear un README orientado a entrevistas.
+- [x] Integrar OpenMetadata si aporta valor al laboratorio.
+- [x] Documentar casos de prueba.
+- [x] Documentar defectos encontrados y evidencia.
+- [x] Crear un README orientado a entrevistas.
 - [x] Preparar una explicación breve de arquitectura y decisiones.
 
 ## Criterio de finalización
@@ -794,6 +794,63 @@ Resultado:
 11 de 11 tareas en success
 ```
 
+## Reportes, reproducibilidad y CI — 26 de julio de 2026
+
+### Comandos reutilizables
+
+- [x] Crear `scripts/bootstrap_postgres.py`.
+- [x] Crear `scripts/run_quality_checks.py`.
+- [x] Generar artefactos dbt en `reports/dbt`.
+- [x] Generar JUnit de pytest en `reports/pytest/junit.xml`.
+- [x] Generar `reports/summary.json`.
+- [x] Excluir reportes y artefactos temporales de Git.
+
+Resultado:
+
+```text
+Bootstrap:
+raw=5000, curado=4825, refinado=4825, consumo=4825
+
+dbt:
+PASS=37, ERROR=0
+
+pytest:
+19 passed, 4 xfailed
+
+summary.json:
+success
+```
+
+### Simulación local de CI
+
+Se creó un PostgreSQL 15 temporal y completamente vacío en el puerto `55432`. Sobre ese entorno se ejecutaron los mismos pasos definidos para GitHub Actions:
+
+1. generar el dataset;
+2. crear las tablas;
+3. cargar y transformar las cuatro capas;
+4. ejecutar dbt;
+5. ejecutar pytest;
+6. generar reportes.
+
+Todos los pasos aprobaron. El contenedor temporal se eliminó después de la validación y no utilizó un volumen persistente.
+
+### GitHub Actions
+
+- [x] Crear `.github/workflows/data-quality.yml`.
+- [x] Configurar PostgreSQL 15 como servicio temporal.
+- [x] Instalar dependencias versionadas.
+- [x] Ejecutar el bootstrap desde cero.
+- [x] Ejecutar el comando único de quality gates.
+- [x] Configurar la publicación de `reports/` como artefacto.
+- [ ] Publicar los commits en GitHub.
+- [ ] Verificar la primera ejecución remota.
+
+### Operación
+
+- [x] Crear `docs/GUIA_OPERATIVA.md`.
+- [x] Documentar inicio, controles, simulación, diagnóstico y detención.
+- [x] Advertir que no se deben eliminar volúmenes durante una detención normal.
+
 ## Próximo paso
 
-El núcleo de datos ya incluye PostgreSQL, transformaciones idempotentes, dbt, pytest y Airflow con dos quality gates. El próximo bloque recomendado es generar reportes persistentes, automatizar `dbt build` y pytest mediante GitHub Actions y terminar el README de portfolio. OpenMetadata debe detenerse cuando no se practique catálogo o lineage porque el stack completo consume varios GB de RAM.
+La versión 1 local está terminada. El único paso pendiente para cerrar CI/CD es publicar los commits y etiquetas en GitHub y observar la primera ejecución remota del workflow. Esa acción externa requiere autorización explícita. API, Postman, interfaz web y Playwright quedan fuera de esta versión y pueden incorporarse como segunda etapa antes o después de la visita guiada.
