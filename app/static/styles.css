@@ -1,0 +1,188 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #15211d;
+  background: #f2f5f1;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+header {
+  color: #f8fbf7;
+  background: #143c32;
+  padding: 3rem max(1.5rem, calc((100vw - 1120px) / 2));
+}
+
+header h1 {
+  max-width: 760px;
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  letter-spacing: -0.04em;
+}
+
+header > p:not(.eyebrow) {
+  max-width: 720px;
+  color: #cfddd8;
+  line-height: 1.6;
+}
+
+nav,
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+nav {
+  margin-top: 1.5rem;
+}
+
+nav a {
+  color: #d8efe7;
+  font-weight: 700;
+}
+
+.status-ok {
+  color: #b8f3d3;
+}
+
+.status-error,
+.error {
+  color: #a92e2e;
+}
+
+main {
+  width: min(1120px, calc(100% - 3rem));
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+section {
+  margin-bottom: 2.5rem;
+}
+
+h2 {
+  margin: 0.2rem 0 1.2rem;
+  font-size: 1.7rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #70b69e;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.cards article {
+  min-height: 130px;
+  padding: 1.25rem;
+  border: 1px solid #dce4df;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgb(20 60 50 / 5%);
+}
+
+.cards span {
+  display: block;
+  color: #5d6d66;
+  font-size: 0.9rem;
+}
+
+.cards strong {
+  display: block;
+  margin-top: 1rem;
+  font-size: 2rem;
+  letter-spacing: -0.04em;
+}
+
+button {
+  border: 0;
+  border-radius: 9px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  background: #236c58;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #dce4df;
+  border-radius: 14px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #e8edea;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: #5d6d66;
+  background: #f8faf8;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 99px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.badge-ok {
+  color: #176046;
+  background: #dff5e9;
+}
+
+.badge-error {
+  color: #8c2626;
+  background: #fbe2e2;
+}
+
+@media (max-width: 760px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  nav,
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
