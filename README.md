@@ -16,32 +16,56 @@ Practicar tareas transferibles a un puesto de Data QA:
 
 ## Arquitectura
 
+### 1. Pipeline de datos controlado por Airflow
+
 ```mermaid
-flowchart LR
-    A["Generador Python"] --> B["CSV reproducibles"]
-    B --> C["PostgreSQL RAW"]
-    C --> D["Curado"]
-    D --> E["Refinado"]
-    E --> F["Consumo"]
-    D --> G["dbt staging"]
-    G --> H["dbt marts"]
-    H --> I["33 pruebas dbt"]
-    F --> J["28 pruebas pytest"]
-    I --> K["Quality gate"]
-    J --> K
-    H --> M["FastAPI de sólo lectura"]
-    M --> N["Panel web"]
-    M --> O["Postman / Newman"]
-    N --> P["Playwright E2E"]
-    L["Airflow"] --> C
-    L --> D
-    L --> E
-    L --> F
-    L --> I
-    L --> J
+flowchart TD
+    G["Python genera datos"] --> CSV["CSV reproducibles"]
+
+    subgraph DAG["AIRFLOW — 11 tareas en orden, sin paralelismo"]
+        direction TB
+        T1["1–4. Crear tablas<br>RAW → Curado → Refinado → Consumo"]
+        T2["5. Cargar CSV<br>en RAW"]
+        T3["6. Transformar<br>RAW → Curado"]
+        T4["7. Transformar<br>Curado → Refinado"]
+        T5["8. Transformar<br>Refinado → Consumo"]
+        T6["9. Documentar<br>columnas"]
+        T7["10. dbt build<br>staging + marts + 33 checks"]
+        D1{"¿dbt aprobó?"}
+        T8["11. pytest<br>28 pruebas"]
+        D2{"¿pytest aprobó?"}
+        OK["DAG success<br>datos aprobados"]
+        STOP["DAG failed<br>pipeline bloqueado"]
+
+        T1 --> T2 --> T3 --> T4 --> T5 --> T6 --> T7 --> D1
+        D1 -- "Sí" --> T8 --> D2
+        D1 -- "No" --> STOP
+        D2 -- "Sí" --> OK
+        D2 -- "No" --> STOP
+    end
+
+    CSV --> T2
 ```
 
-Airflow orquesta once tareas. `dbt build` se ejecuta antes de pytest; si cualquiera de los dos devuelve un error, el DAG queda bloqueado.
+Airflow no apunta a cada tabla como un observador externo: el rectángulo completo representa su DAG y las flechas internas son sus dependencias de ejecución.
+
+### 2. Aplicación y pruebas posteriores
+
+```mermaid
+flowchart LR
+    PG["PostgreSQL aprobado<br>RAW · Curado · Refinado · Consumo · dbt_marts"]
+    PG -->|"lee dbt_marts"| API["FastAPI"]
+    API -->|"JSON"| WEB["Panel web"]
+    NEWMAN["Postman / Newman"] -. "prueba endpoints" .-> API
+    PLAY["Playwright"] -. "abre y prueba" .-> WEB
+
+    DBEAVER["DBeaver"] -. "consulta manual" .-> PG
+    META["OpenMetadata"] -. "cataloga" .-> PG
+```
+
+Postman y Playwright no están dentro del DAG. `scripts/run_app_checks.py` inicia temporalmente FastAPI, ejecuta Playwright, ejecuta Newman y detiene la API. GitHub Actions repite el pipeline y estos controles en un entorno temporal, pero no controla el Airflow local.
+
+La explicación técnica y su equivalente cotidiano están desarrollados en `docs/MAPA_EJECUCION_LAB.md`.
 
 ## Stack principal
 
@@ -247,6 +271,7 @@ La orquestación se mantiene en el repositorio complementario `airflow-lab`.
 ## Documentación
 
 - `docs/GUIA_INTRODUCTORIA_LAB_QA.md`: explicación sencilla del laboratorio.
+- `docs/MAPA_EJECUCION_LAB.md`: orden exacto, responsabilidades y ejemplo cotidiano.
 - `docs/PLAN_ACCION_LAB_QA.md`: avance, decisiones y validaciones.
 - `docs/REGISTRO_DEFECTOS_LAB_QA.md`: defectos, evidencia y resolución.
 - `docs/GUIA_GIT.md`: flujo de versionado utilizado.
