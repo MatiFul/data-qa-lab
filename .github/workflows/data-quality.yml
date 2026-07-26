@@ -15,9 +15,9 @@ permissions:
 
 jobs:
   quality:
-    name: dbt and pytest
+    name: data, API and web quality
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     services:
       postgres:
@@ -54,6 +54,7 @@ jobs:
             requirements-generator.txt
             requirements-dev.txt
             requirements-dbt.txt
+            requirements-app.txt
 
       - name: Install dependencies
         run: >-
@@ -61,6 +62,10 @@ jobs:
           --requirement requirements-generator.txt
           --requirement requirements-dev.txt
           --requirement requirements-dbt.txt
+          --requirement requirements-app.txt
+
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
 
       - name: Generate deterministic dataset
         run: python data_generator/generate_dataset.py
@@ -70,6 +75,9 @@ jobs:
 
       - name: Run quality gates
         run: python scripts/run_quality_checks.py
+
+      - name: Run API and web quality gates
+        run: python scripts/run_app_checks.py
 
       - name: Upload quality reports
         if: always()

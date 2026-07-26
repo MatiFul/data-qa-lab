@@ -1,0 +1,132 @@
+{
+  "info": {
+    "_postman_id": "ee3669e2-a219-4b03-895f-c44ac75b46f3",
+    "name": "Data QA Lab API",
+    "description": "Pruebas de contrato y negocio sobre la API de sólo lectura del laboratorio.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health: API y base conectadas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('responde HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('confirma la conexión', () => {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.status).to.eql('ok');",
+              "  pm.expect(body.database).to.eql('connected');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resumen: métricas conocidas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/quality/summary",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "quality", "summary"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('responde HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('mantiene la línea base del dataset', () => {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.total_transactions).to.eql(4825);",
+              "  pm.expect(body.inconsistent_transactions).to.eql(200);",
+              "  pm.expect(Number(body.inconsistency_rate)).to.be.below(0.05);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transacciones: filtro de inconsistencias",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/transactions?only_inconsistent=true&limit=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "transactions"],
+          "query": [
+            {"key": "only_inconsistent", "value": "true"},
+            {"key": "limit", "value": "10"}
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('responde HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('devuelve sólo filas marcadas', () => {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.count).to.eql(10);",
+              "  pm.expect(body.items.every(item => item.inconsistent_amount_flag === 1)).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transacción inexistente: HTTP 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/transactions/999999999",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "transactions", "999999999"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('responde HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('explica el error', () => {",
+              "  pm.expect(pm.response.json().detail).to.eql('Transacción no encontrada.');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -258,7 +258,7 @@ Git no es lo mismo que GitHub. Git funciona localmente; GitHub es un servicio qu
 
 **Qué es:** una interfaz visual para enviar peticiones a una API y revisar sus respuestas.
 
-**Para qué lo usaremos:** explorar manualmente la futura API del laboratorio y guardar ejemplos positivos y negativos.
+**Para qué lo usamos:** conservar una colección con casos positivos y negativos de la API. Newman ejecuta esa misma colección automáticamente desde Docker, por lo que no hace falta instalar Node ni la aplicación de escritorio para comenzar.
 
 **Para qué más se usa:** documentación de APIs, colecciones, variables de entorno y pruebas automáticas básicas.
 
@@ -270,11 +270,23 @@ Git no es lo mismo que GitHub. Git funciona localmente; GitHub es un servicio qu
 
 **Qué es:** una herramienta que controla navegadores y automatiza acciones de usuario.
 
-**Para qué lo usaremos:** validar que lo mostrado en la futura interfaz web coincida con la API y PostgreSQL.
+**Para qué lo usamos:** abrir el panel en un Chromium aislado, comprobar las métricas y verificar que el filtro muestre sólo transacciones inconsistentes.
 
 **Para qué más se usa:** regresión web, capturas, pruebas en varios navegadores y pruebas visuales.
 
 **Herramientas parecidas:** Selenium, Cypress, WebdriverIO, Puppeteer.
+
+### FastAPI
+
+**También se conoce como:** framework de API, backend web o servicio HTTP.
+
+**Qué es:** una librería Python para crear APIs y documentarlas automáticamente.
+
+**Para qué lo usamos:** exponer en modo de sólo lectura el resumen y las transacciones de `dbt_marts`. También sirve la pequeña interfaz web del lab.
+
+**Para qué más se usa:** microservicios, integraciones entre sistemas, backends y servicios de machine learning.
+
+**Herramientas parecidas:** Flask, Django REST Framework, Express, Spring Boot.
 
 ### Power BI
 
@@ -423,7 +435,7 @@ En un trabajo real, cada `xfail` debería estar relacionado con un ticket, una d
 7. Revisar el DAG y entender el orden del pipeline.
 8. Abrir OpenMetadata y observar tablas y lineage.
 9. Revisar los modelos y pruebas dbt.
-10. Agregar CI/CD y luego evaluar API, Postman, interfaz web y Playwright.
+10. Recorrer la API, la colección Postman y las dos pruebas Playwright.
 
 No hace falta dominar todas las herramientas al mismo tiempo. Para empezar, el núcleo práctico es:
 
@@ -435,7 +447,7 @@ Airflow básico
 Git básico
 ```
 
-Postman, Playwright, Power BI y CI/CD se agregan cuando el flujo principal ya se entiende.
+Postman, Playwright y CI/CD ya están conectados al núcleo; Power BI queda para una etapa posterior.
 
 ## 11. Explicación corta del laboratorio
 

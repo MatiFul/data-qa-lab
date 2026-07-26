@@ -28,6 +28,7 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 - [x] Confirmar la arquitectura definitiva.
 - [x] Extender y actualizar el laboratorio existente.
 - [x] Completar el núcleo práctico y la documentación de portfolio de la versión 1.
+- [x] Completar localmente la aplicación, API y automatización web de la versión 2.
 
 ## Fase 0 — Relevamiento del entorno
 
@@ -69,11 +70,11 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 
 ## Fase 2 — Aplicación bajo prueba
 
-- [ ] Crear una API mínima para productos, clientes, pedidos y ventas.
-- [ ] Crear una interfaz web mínima.
-- [ ] Incorporar datos y defectos controlados.
-- [ ] Documentar reglas de negocio.
-- [ ] Verificar manualmente los flujos principales.
+- [x] Crear una API mínima de sólo lectura sobre las métricas y transacciones.
+- [x] Crear una interfaz web mínima.
+- [x] Reutilizar los datos y defectos controlados de la versión 1.
+- [x] Documentar las reglas expuestas por la aplicación.
+- [x] Verificar los endpoints, el escenario negativo y los flujos principales.
 
 ## Fase 3 — QA de datos con SQL y pytest
 
@@ -108,12 +109,12 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 
 ## Fase 6 — Pruebas de API y web
 
-- [ ] Crear una colección de Postman.
-- [ ] Probar manualmente endpoints y escenarios negativos.
-- [ ] Automatizar pruebas de API con pytest.
-- [ ] Instalar y configurar Playwright.
-- [ ] Automatizar flujos web principales.
-- [ ] Validar consistencia entre web, API y base de datos.
+- [x] Crear una colección de Postman.
+- [x] Probar endpoints positivos y escenarios negativos.
+- [x] Automatizar pruebas de API con pytest.
+- [x] Instalar y configurar Playwright para Python.
+- [x] Automatizar flujos web principales.
+- [x] Validar consistencia entre web, API y base de datos.
 
 ## Fase 7 — CI/CD
 
@@ -176,11 +177,11 @@ La estrategia recomendada es recuperar, validar y extender esos repositorios. El
 | Python del proyecto | Completado: `.venv` con Python 3.12.2. |
 | pytest del proyecto | Completado: pytest y psycopg aislados dentro de `.venv`. |
 | dbt Core | Instalado en `.venv`, versión 1.11.12, con adaptador PostgreSQL 1.11.0. |
-| Node.js y npm | No están instalados; serán necesarios para Playwright. |
-| Playwright | No está instalado. |
-| Postman | No se detectó instalado. |
+| Node.js y npm | No están instalados ni son necesarios: Playwright usa Python y Newman usa Docker. |
+| Playwright | Instalado en `.venv` con Chromium aislado. |
+| Postman | Colección versionada y ejecutada automáticamente mediante Newman en Docker. |
 | CI/CD | Agregar GitHub Actions cuando las pruebas locales sean estables. |
-| API y web | Todavía no forman parte del lab existente. |
+| API y web | FastAPI y panel web incorporados sobre `dbt_marts` en modo de sólo lectura. |
 | QA automático | Suite estable e integrada como gate de Airflow; falta incorporarla a CI/CD. |
 
 ### Restricciones y decisiones
@@ -851,6 +852,47 @@ Todos los pasos aprobaron. El contenedor temporal se eliminó después de la val
 - [x] Documentar inicio, controles, simulación, diagnóstico y detención.
 - [x] Advertir que no se deben eliminar volúmenes durante una detención normal.
 
+## Etapa 2 — API, web y pruebas de aplicación — 26 de julio de 2026
+
+### Aplicación
+
+- [x] Crear la API de la versión 2 con FastAPI sobre `dbt_marts.fct_transaction_quality`.
+- [x] Forzar las conexiones PostgreSQL a sólo lectura.
+- [x] Publicar `health`, resumen, listado filtrable y detalle por ID.
+- [x] Servir un panel web sin agregar otro framework.
+- [x] Mantener la contraseña fuera del repositorio.
+
+Endpoints:
+
+```text
+GET /health
+GET /api/quality/summary
+GET /api/transactions?only_inconsistent=true&limit=10
+GET /api/transactions/{transaction_id}
+```
+
+### Automatización
+
+```text
+pytest API                 5 passed
+suite pytest completa     24 passed, 4 xfailed
+Playwright                 2 passed
+Postman/Newman             4 requests, 8 assertions, 0 failed
+```
+
+- [x] Crear `requirements-app.txt` con versiones fijas.
+- [x] Usar Playwright para Python y su Chromium aislado.
+- [x] Ejecutar la colección Postman con Newman en Docker.
+- [x] Evitar instalar Node.js porque no agrega valor necesario a este alcance.
+- [x] Crear `scripts/run_app_checks.py`.
+- [x] Generar JUnit de Playwright y Newman dentro de `reports/`.
+- [x] Ampliar GitHub Actions con los controles de API y web.
+- [x] Confirmar que una credencial inválida bloquea el gate.
+- [x] Recuperar el gate con la conexión correcta y dejar los reportes en verde.
+- [x] Actualizar README y guías.
+
+La aplicación se inicia sólo durante el control automático y se detiene al terminar. No depende de Chrome abierto ni modifica los datos.
+
 ## Próximo paso
 
-La versión 1 local está terminada. El único paso pendiente para cerrar CI/CD es publicar los commits y etiquetas en GitHub y observar la primera ejecución remota del workflow. Esa acción externa requiere autorización explícita. API, Postman, interfaz web y Playwright quedan fuera de esta versión y pueden incorporarse como segunda etapa antes o después de la visita guiada.
+La versión 2 local está terminada. Quedan pendientes la publicación de los commits y etiquetas en GitHub y la primera ejecución remota del workflow; ambas acciones externas requieren autorización explícita. Power BI y la validación por otra persona continúan como extensiones posteriores, no como requisitos para comenzar la visita guiada.

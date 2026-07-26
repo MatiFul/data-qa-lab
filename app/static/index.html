@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Data QA Lab</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <header>
+      <p class="eyebrow">LABORATORIO LOCAL</p>
+      <h1>Panel de calidad de transacciones</h1>
+      <p>La misma información validada por SQL, dbt y pytest, expuesta ahora como API y aplicación web.</p>
+      <nav>
+        <a href="/docs">Documentación de la API</a>
+        <span id="api-status" data-testid="api-status">Comprobando conexión…</span>
+      </nav>
+    </header>
+
+    <main>
+      <section aria-labelledby="summary-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">RESUMEN</p>
+            <h2 id="summary-title">Estado del dataset</h2>
+          </div>
+          <button id="refresh-button" type="button">Actualizar</button>
+        </div>
+        <div class="cards">
+          <article>
+            <span>Total de transacciones</span>
+            <strong data-testid="total-transactions">—</strong>
+          </article>
+          <article>
+            <span>Inconsistencias</span>
+            <strong data-testid="inconsistent-transactions">—</strong>
+          </article>
+          <article>
+            <span>Tasa de inconsistencia</span>
+            <strong data-testid="inconsistency-rate">—</strong>
+          </article>
+          <article>
+            <span>Sin ítems</span>
+            <strong data-testid="without-items">—</strong>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="transactions-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">EVIDENCIA</p>
+            <h2 id="transactions-title">Muestra de transacciones</h2>
+          </div>
+          <label class="filter">
+            <input id="only-inconsistent" type="checkbox">
+            Sólo inconsistentes
+          </label>
+        </div>
+
+        <p id="error-message" class="error" role="alert" hidden></p>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Registrado</th>
+                <th>Calculado</th>
+                <th>Diferencia</th>
+                <th>Ítems</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-body" data-testid="transactions-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
