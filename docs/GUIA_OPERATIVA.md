@@ -101,15 +101,38 @@ Generar y cargar:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_quality_checks.py
+.\.venv\Scripts\python.exe scripts\run_app_checks.py
 ```
 
 Resultado normal:
 
 ```text
 dbt PASS=37, ERROR=0
-pytest 19 passed, 4 xfailed
+pytest 24 passed, 4 xfailed
+Playwright 2 passed
+Newman 4 requests, 8 assertions, 0 failed
 reports/summary.json = success
 ```
+
+El segundo comando inicia la API sólo durante la prueba y la detiene al terminar. Usa el Chromium propio de Playwright y Newman en Docker; Chrome puede permanecer cerrado.
+
+## Abrir la aplicación para explorarla
+
+Con las variables de conexión ya definidas:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Direcciones:
+
+```text
+Panel web:         http://127.0.0.1:8000
+Documentación API: http://127.0.0.1:8000/docs
+Health check:      http://127.0.0.1:8000/health
+```
+
+La aplicación consulta `dbt_marts` con una conexión de sólo lectura. Para detenerla, usar `Ctrl+C` en la misma terminal.
 
 ## Ejecutar desde Airflow
 

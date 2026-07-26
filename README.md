@@ -1,6 +1,6 @@
 # Data QA Lab
 
-Laboratorio reproducible de calidad de datos sobre PostgreSQL. Implementa un flujo completo desde la generación de datos hasta quality gates automatizados con dbt, pytest, Airflow y GitHub Actions.
+Laboratorio reproducible de calidad de datos sobre PostgreSQL. Implementa un flujo completo desde la generación de datos hasta quality gates automatizados sobre datos, API y web.
 
 ## Objetivo
 
@@ -26,9 +26,13 @@ flowchart LR
     D --> G["dbt staging"]
     G --> H["dbt marts"]
     H --> I["33 pruebas dbt"]
-    F --> J["23 pruebas pytest"]
+    F --> J["28 pruebas pytest"]
     I --> K["Quality gate"]
     J --> K
+    H --> M["FastAPI de sólo lectura"]
+    M --> N["Panel web"]
+    M --> O["Postman / Newman"]
+    N --> P["Playwright E2E"]
     L["Airflow"] --> C
     L --> D
     L --> E
@@ -48,6 +52,9 @@ Airflow orquesta once tareas. `dbt build` se ejecuta antes de pytest; si cualqui
 | dbt Core 1.11 | Modelar `staging` y `marts`, documentar dependencias y probar transformaciones. |
 | pytest 9 | Ejecutar controles de integración, regresión y reglas de negocio. |
 | Apache Airflow 3 | Orquestar el pipeline y sus quality gates. |
+| FastAPI | Exponer métricas y transacciones de `dbt_marts` como API y panel web. |
+| Postman y Newman | Mantener y ejecutar pruebas de contrato y escenarios negativos. |
+| Playwright | Automatizar recorridos reales sobre la interfaz web. |
 | Docker Compose | Ejecutar la infraestructura local de manera aislada. |
 | Git y GitHub Actions | Versionar y automatizar las validaciones. |
 | DBeaver y VS Code | Investigar datos y mantener código. |
@@ -95,15 +102,30 @@ Las pruebas cubren claves, nulos, relaciones, flags recalculados, reconciliació
 
 ### pytest
 
-La suite contiene 23 pruebas:
+La suite contiene 28 pruebas:
 
 ```text
-19 passed
+24 passed
 4 xfailed
 0 failed
 ```
 
 Los cuatro `xfail(strict=True)` representan anomalías intencionales del dataset. Si una deja de reproducirse, pytest obliga a revisar su clasificación.
+
+Cinco pruebas adicionales validan la salud de la API, la línea base de métricas, el filtro de inconsistencias, el contrato de error `404` y la validación de parámetros.
+
+### API, Postman y Playwright
+
+FastAPI consulta `dbt_marts.fct_transaction_quality` mediante conexiones forzadas a sólo lectura y publica:
+
+```text
+GET /health
+GET /api/quality/summary
+GET /api/transactions
+GET /api/transactions/{transaction_id}
+```
+
+La interfaz web usa esos mismos endpoints. La colección Postman contiene cuatro requests y ocho assertions; Playwright automatiza dos recorridos sobre Chromium. Ambos controles se ejecutan con un único comando y finalizan actualmente con cero fallas.
 
 ### Airflow
 
@@ -125,7 +147,10 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install `
   --requirement requirements-generator.txt `
   --requirement requirements-dev.txt `
-  --requirement requirements-dbt.txt
+  --requirement requirements-dbt.txt `
+  --requirement requirements-app.txt
+
+.\.venv\Scripts\python.exe -m playwright install chromium
 ```
 
 Definir la conexión sin guardar la contraseña:
@@ -149,6 +174,7 @@ Ejecutar todos los controles y generar reportes:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_quality_checks.py
+.\.venv\Scripts\python.exe scripts\run_app_checks.py
 ```
 
 ## Reportes
@@ -163,8 +189,13 @@ reports/
 |   `-- target/
 |       |-- manifest.json
 |       `-- run_results.json
-`-- pytest/
-    `-- junit.xml
+|-- pytest/
+|   `-- junit.xml
+|-- playwright/
+|   `-- junit.xml
+|-- postman/
+|   `-- junit.xml
+`-- api.log
 ```
 
 `reports/` se excluye de Git. GitHub Actions lo publica como artefacto temporal de cada ejecución.
@@ -176,9 +207,9 @@ reports/
 1. instalación de dependencias;
 2. generación determinística del dataset;
 3. bootstrap completo de PostgreSQL;
-4. `dbt build`;
-5. pytest;
-6. publicación de reportes.
+4. `dbt build` y pytest;
+5. API temporal, Playwright y Newman;
+6. publicación de todos los reportes.
 
 El workflow se dispara en cambios sobre `main`, ramas `feature/**`, pull requests y ejecuciones manuales. Su ejecución remota quedará habilitada cuando los commits locales se publiquen en GitHub.
 
@@ -198,9 +229,12 @@ El historial completo está en `docs/REGISTRO_DEFECTOS_LAB_QA.md`.
 ```text
 data-qa-lab/
 |-- .github/workflows/       CI/CD
+|-- app/                     API FastAPI e interfaz web
 |-- data_generator/          dataset determinístico
 |-- dbt/                     modelos, fuentes y pruebas dbt
 |-- docs/                    plan, guía y registro de defectos
+|-- e2e/                     recorridos Playwright
+|-- postman/                 colección de API
 |-- scripts/                 bootstrap y comando único de QA
 |-- sql/postgres/            DDL y transformaciones por capas
 |-- tests/                   suite pytest
@@ -220,13 +254,15 @@ La orquestación se mantiene en el repositorio complementario `airflow-lab`.
 
 ## Estado
 
-La versión 1 local está funcional y reproducible:
+La versión 2 local está funcional y reproducible:
 
 - PostgreSQL y dataset estabilizados;
 - dbt y pytest integrados;
 - Airflow validado con éxito y fallo controlado;
+- API de sólo lectura y panel web incorporados;
+- Postman/Newman y Playwright integrados con cero fallas;
 - reportes persistentes disponibles;
 - CI/CD preparado localmente;
 - documentación de portfolio actualizada.
 
-La publicación en GitHub y la primera ejecución remota del workflow requieren una autorización separada. API, Postman, interfaz web y Playwright quedan como una posible segunda etapa.
+La publicación en GitHub y la primera ejecución remota del workflow requieren una autorización separada.
