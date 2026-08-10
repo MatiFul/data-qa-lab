@@ -62,6 +62,7 @@
               "  const body = pm.response.json();",
               "  pm.expect(body.total_transactions).to.eql(4825);",
               "  pm.expect(body.inconsistent_transactions).to.eql(200);",
+              "  pm.expect(body.transactions_without_items).to.eql(100);",
               "  pm.expect(Number(body.inconsistency_rate)).to.be.below(0.05);",
               "});"
             ],
@@ -121,6 +122,37 @@
               "pm.test('responde HTTP 404', () => pm.response.to.have.status(404));",
               "pm.test('explica el error', () => {",
               "  pm.expect(pm.response.json().detail).to.eql('Transacción no encontrada.');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Límite inválido: HTTP 422",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/transactions?limit=101",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "transactions"],
+          "query": [
+            {"key": "limit", "value": "101"}
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('responde HTTP 422', () => pm.response.to.have.status(422));",
+              "pm.test('identifica el parámetro inválido', () => {",
+              "  const detail = pm.response.json().detail;",
+              "  pm.expect(detail).to.be.an('array').that.is.not.empty;",
+              "  pm.expect(detail.some(error => error.loc.includes('limit'))).to.be.true;",
               "});"
             ],
             "type": "text/javascript"

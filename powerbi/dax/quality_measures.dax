@@ -1,0 +1,23 @@
+-- Crear estas medidas dentro de mart_daily_quality.
+
+Total Transactions =
+SUM(mart_daily_quality[transaction_count])
+
+Inconsistent Transactions =
+SUM(mart_daily_quality[inconsistent_transactions])
+
+Transactions Without Items =
+SUM(mart_daily_quality[transactions_without_items])
+
+Inconsistency Rate =
+DIVIDE(
+    [Inconsistent Transactions],
+    [Total Transactions],
+    0
+)
+
+Total Transaction Amount =
+SUM(mart_daily_quality[total_transaction_amount])
+
+Total Calculated Item Amount =
+SUM(mart_daily_quality[total_calculated_item_amount])

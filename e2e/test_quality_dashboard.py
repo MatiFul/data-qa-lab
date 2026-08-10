@@ -15,6 +15,7 @@ def test_dashboard_presents_quality_metrics(page: Page, base_url: str) -> None:
     )
     expect(page.get_by_test_id("inconsistent-transactions")).to_have_text("200")
     expect(page.get_by_test_id("inconsistency-rate")).to_have_text("4.15%")
+    expect(page.get_by_test_id("without-items")).to_have_text("100")
     expect(page.get_by_test_id("transactions-body").locator("tr")).to_have_count(20)
 
 

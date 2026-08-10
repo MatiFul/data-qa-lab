@@ -37,6 +37,7 @@ async def test_quality_summary_exposes_known_dataset(
     summary = response.json()
     assert summary["total_transactions"] == 4825
     assert summary["inconsistent_transactions"] == 200
+    assert summary["transactions_without_items"] == 100
     assert float(summary["inconsistency_rate"]) == pytest.approx(0.0415)
     assert summary["first_transaction_date"] <= summary["last_transaction_date"]
 

@@ -1,4 +1,4 @@
-"""Ejecuta las pruebas web y Postman contra una API temporal del lab."""
+"""Ejecuta pytest API, Playwright y Newman contra la aplicación temporal."""
 
 from __future__ import annotations
 
@@ -65,13 +65,16 @@ def newman_command(port: int, report_directory: Path) -> list[str]:
 def main() -> int:
     port = int(os.getenv("QA_APP_PORT", "8000"))
     local_base_url = f"http://127.0.0.1:{port}"
+    api_reports = REPORTS_DIRECTORY / "api"
     playwright_reports = REPORTS_DIRECTORY / "playwright"
     postman_reports = REPORTS_DIRECTORY / "postman"
+    api_reports.mkdir(parents=True, exist_ok=True)
     playwright_reports.mkdir(parents=True, exist_ok=True)
     postman_reports.mkdir(parents=True, exist_ok=True)
 
     server_log_path = REPORTS_DIRECTORY / "api.log"
     creation_flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+    api_return_code = 1
     playwright_return_code = 1
     newman_return_code = 1
     with server_log_path.open("w", encoding="utf-8") as server_log:
@@ -95,6 +98,20 @@ def main() -> int:
 
         try:
             wait_for_api(f"{local_base_url}/health", server)
+            api_result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    "tests/api",
+                    "--junitxml",
+                    str(api_reports / "junit.xml"),
+                    "-q",
+                ],
+                cwd=PROJECT_ROOT,
+                check=False,
+            )
+            api_return_code = api_result.returncode
             playwright_result = subprocess.run(
                 [
                     sys.executable,
@@ -105,6 +122,12 @@ def main() -> int:
                     local_base_url,
                     "--browser",
                     "chromium",
+                    "--output",
+                    str(playwright_reports / "artifacts"),
+                    "--tracing",
+                    "retain-on-failure",
+                    "--screenshot",
+                    "only-on-failure",
                     "--junitxml",
                     str(playwright_reports / "junit.xml"),
                     "-q",
@@ -129,15 +152,18 @@ def main() -> int:
                 server.kill()
                 server.wait(timeout=5)
 
-    if playwright_return_code or newman_return_code:
+    if api_return_code or playwright_return_code or newman_return_code:
         print(
             "Etapa 2 con fallas: "
+            f"pytest API={api_return_code}, "
             f"Playwright={playwright_return_code}, "
             f"Newman={newman_return_code}."
         )
         return 1
 
-    print("Etapa 2 OK: Playwright y Newman finalizaron sin fallas.")
+    print(
+        "Etapa 2 OK: pytest API, Playwright y Newman finalizaron sin fallas."
+    )
     return 0
 
 
