@@ -270,6 +270,15 @@ el mapa se agrupan en el commit de cierre del bloque. Ambos repositorios pasan
 `git diff --check`. Los avisos LF/CRLF describen la conversión futura configurada
 por Git y no son errores de whitespace.
 
+**Estado 6A:** completado el 10 de agosto de 2026. El vault activo de Obsidian
+quedó sincronizado con la arquitectura `raw → dbt_staging → dbt_intermediate →
+dbt_marts`, la línea base validada, los gates, la operación, el linaje y el modo
+práctica. Se separaron arquitectura, prácticas y defensa profesional; las notas
+de las capas antiguas y de implementaciones previas quedaron identificadas como
+históricas en vez de borrarse. Los conceptos CLI/GUI y CI/CD ya estaban incluidos
+y la guía futura de Hadoop/Cloudera permanece fuera del lab. No se modificó el
+vault de backup ni se cambiaron el CV, LinkedIn o una publicación remota.
+
 ### Bloque 7 — Portfolio público y CV
 
 - auditoría de publicación y secretos;
@@ -1242,12 +1251,10 @@ agosto volvió a confirmarlas después de un arranque desde servicios detenidos.
 
 ## Próximo paso
 
-La visita guiada, los bloques 1 a 5 y los bloques técnicos 6B y 6C quedaron
-completados. Continúa el bloque 6A: inventariar y sincronizar con Obsidian el estado
-técnico definitivo, manteniendo allí la fuente de verdad de aprendizaje, conceptos,
-prácticas y desarrollo profesional. Después se conversa el bloque 7 de portfolio y
-CV. Las integraciones visuales de Postman y Power BI continúan identificadas como
-prácticas manuales, no como defectos técnicos.
+La visita guiada y los bloques locales 1 a 6 quedaron completados. El próximo paso
+es conversar y decidir el bloque 7 de portfolio público y CV antes de publicar o
+modificar perfiles profesionales. Las integraciones visuales de Postman y Power BI
+continúan identificadas como prácticas manuales, no como defectos técnicos.
 ## Backlog pedagógico — evolución de patrones de carga y PostgreSQL
 
 Conservar el dataset actual y su recarga completa como escenario base reproducible.
