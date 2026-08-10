@@ -19,7 +19,12 @@ def test_required_schemas_exist(db_scalar):
         """
         SELECT COUNT(*)
         FROM information_schema.schemata
-        WHERE schema_name IN ('raw', 'curado', 'refinado', 'consumo')
+        WHERE schema_name IN (
+            'raw',
+            'dbt_staging',
+            'dbt_intermediate',
+            'dbt_marts'
+        )
         """
     )
     assert existing_schemas == 4
@@ -34,10 +39,15 @@ def test_core_tables_are_available(db_scalar):
         WHERE table_schema || '.' || table_name IN (
             'raw.transacciones_raw',
             'raw.items_transaccion_raw',
-            'curado.transacciones_curado',
-            'refinado.transacciones_refinado',
-            'consumo.transacciones_consumo'
+            'dbt_staging.stg_transactions',
+            'dbt_staging.stg_transaction_items',
+            'dbt_intermediate.int_valid_transactions',
+            'dbt_intermediate.int_rejected_transactions',
+            'dbt_intermediate.int_valid_transaction_items',
+            'dbt_intermediate.int_rejected_transaction_items',
+            'dbt_marts.fct_transaction_quality',
+            'dbt_marts.mart_daily_quality'
         )
         """
     )
-    assert existing_tables == 5
+    assert existing_tables == 10

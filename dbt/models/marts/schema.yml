@@ -5,41 +5,76 @@ models:
     description: Hechos transaccionales con métricas y flags de calidad recalculados por dbt.
     columns:
       - name: transaction_id
+        description: Identificador único de la transacción aceptada por las reglas de calidad.
         data_tests:
           - not_null
           - unique
+      - name: account_id
+        description: Cuenta asociada a la transacción y validada contra el maestro de cuentas.
+      - name: channel_id
+        description: Canal asociado a la transacción y validado contra el maestro de canales.
+      - name: status_id
+        description: Estado asociado a la transacción y validado contra el maestro de estados.
+      - name: branch_id
+        description: Sucursal informada en la fuente; puede ser nula.
       - name: transaction_amount
+        description: Monto informado por la transacción de origen.
         data_tests:
           - not_null
       - name: calculated_item_amount
+        description: Suma de los importes de ítems válidos; vale cero cuando no hay ítems.
         data_tests:
           - not_null
+      - name: amount_difference
+        description: Diferencia recalculada como transaction_amount menos calculated_item_amount.
       - name: item_count
+        description: Cantidad de ítems válidos asociados a la transacción.
         data_tests:
           - not_null
       - name: has_no_items_flag
+        description: Flag QA; vale 1 cuando item_count es cero y 0 en caso contrario.
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: [0, 1]
       - name: inconsistent_amount_flag
+        description: Flag QA; vale 1 cuando el valor absoluto de amount_difference supera 1.
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: [0, 1]
+      - name: transaction_at
+        description: Fecha y hora original de la transacción.
+      - name: transaction_date
+        description: Fecha calendario derivada de transaction_at para agregaciones diarias.
+      - name: processed_date
+        description: Fecha de procesamiento informada en la fuente.
+      - name: dbt_loaded_at
+        description: Marca temporal de la última construcción del modelo por dbt.
 
   - name: mart_daily_quality
     description: Resumen diario para monitorear volumen, montos y anomalías.
     columns:
       - name: transaction_date
+        description: Fecha calendario usada como grano único del mart diario.
         data_tests:
           - not_null
           - unique
       - name: transaction_count
+        description: Cantidad de transacciones válidas del día.
         data_tests:
           - not_null
+      - name: total_transaction_amount
+        description: Suma diaria de los montos informados por las transacciones.
+      - name: total_calculated_item_amount
+        description: Suma diaria de los montos recalculados desde los ítems válidos.
+      - name: transactions_without_items
+        description: Cantidad diaria de transacciones cuyo flag has_no_items_flag vale 1.
+      - name: inconsistent_transactions
+        description: Cantidad diaria de transacciones cuyo flag inconsistent_amount_flag vale 1.
       - name: inconsistency_rate
+        description: Proporción diaria de transacciones inconsistentes sobre el total válido.
         data_tests:
           - not_null

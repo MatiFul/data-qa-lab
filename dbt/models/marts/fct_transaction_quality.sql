@@ -1,12 +1,3 @@
-with item_totals as (
-    select
-        transaction_id,
-        count(item_id)::integer as item_count,
-        sum(item_amount)::numeric(14, 2) as calculated_item_amount
-    from {{ ref('stg_transaction_items') }}
-    group by transaction_id
-)
-
 select
     transaction.transaction_id,
     transaction.account_id,
@@ -36,6 +27,6 @@ select
     transaction.transaction_date,
     transaction.processed_date,
     current_timestamp as dbt_loaded_at
-from {{ ref('stg_transactions') }} as transaction
-left join item_totals as item
+from {{ ref('int_valid_transactions') }} as transaction
+left join {{ ref('int_transaction_item_totals') }} as item
     on transaction.transaction_id = item.transaction_id

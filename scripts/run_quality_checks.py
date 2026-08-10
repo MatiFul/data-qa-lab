@@ -14,16 +14,6 @@ DBT_REPORTS = REPORTS_ROOT / "dbt"
 PYTEST_REPORTS = REPORTS_ROOT / "pytest"
 
 
-def dbt_executable() -> Path:
-    executable_name = "dbt.exe" if os.name == "nt" else "dbt"
-    executable = Path(sys.executable).with_name(executable_name)
-    if not executable.is_file():
-        raise FileNotFoundError(
-            "No se encontró dbt junto al intérprete Python del proyecto."
-        )
-    return executable
-
-
 def run_command(command: list[str]) -> int:
     print(f"\n> {' '.join(command)}", flush=True)
     return subprocess.run(
@@ -45,7 +35,8 @@ def main() -> int:
 
     dbt_exit_code = run_command(
         [
-            str(dbt_executable()),
+            sys.executable,
+            str(PROJECT_ROOT / "scripts" / "dbt_cli.py"),
             "build",
             "--project-dir",
             str(PROJECT_ROOT / "dbt"),
@@ -58,17 +49,24 @@ def main() -> int:
         ]
     )
 
-    pytest_exit_code = run_command(
-        [
-            sys.executable,
-            "-m",
-            "pytest",
-            "-p",
-            "no:cacheprovider",
-            "--junitxml",
-            str(PYTEST_REPORTS / "junit.xml"),
-        ]
-    )
+    pytest_exit_code: int | None = None
+    if dbt_exit_code == 0:
+        pytest_exit_code = run_command(
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "-p",
+                "no:cacheprovider",
+                "tests",
+                "--ignore",
+                "tests/api",
+                "--junitxml",
+                str(PYTEST_REPORTS / "junit.xml"),
+            ]
+        )
+    else:
+        print("\npytest omitido: dbt no aprobó el primer quality gate.")
 
     summary = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),

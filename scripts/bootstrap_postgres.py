@@ -12,9 +12,7 @@ DATA_ROOT = PROJECT_ROOT / "data_generator" / "output"
 
 DDL_FILES = [
     SQL_ROOT / "ddl" / "raw" / "01_create_raw_tables.sql",
-    SQL_ROOT / "ddl" / "curado" / "01_create_curado_tables.sql",
-    SQL_ROOT / "ddl" / "refinado" / "01_create_refinado_tables.sql",
-    SQL_ROOT / "ddl" / "consumo" / "01_create_consumo_tables.sql",
+    SQL_ROOT / "ddl" / "security" / "01_create_qa_bi_reader.sql",
 ]
 
 RAW_FILES = [
@@ -27,14 +25,6 @@ RAW_FILES = [
     ("transacciones_raw.csv", "raw.transacciones_raw"),
     ("items_transaccion_raw.csv", "raw.items_transaccion_raw"),
 ]
-
-TRANSFORMATION_FILES = [
-    SQL_ROOT / "transformations" / "01_raw_to_curado.sql",
-    SQL_ROOT / "transformations" / "02_curado_to_refinado.sql",
-    SQL_ROOT / "transformations" / "03_refinado_to_consumo.sql",
-    SQL_ROOT / "documentation" / "01_column_comments.sql",
-]
-
 
 def database_settings() -> dict[str, object]:
     password = os.getenv("QA_DB_PASSWORD", "")
@@ -92,23 +82,19 @@ def main() -> None:
 
             load_raw_files(cursor)
 
-            for sql_path in TRANSFORMATION_FILES:
-                execute_sql_file(cursor, sql_path)
-
             cursor.execute(
                 """
                 SELECT
                     (SELECT COUNT(*) FROM raw.transacciones_raw),
-                    (SELECT COUNT(*) FROM curado.transacciones_curado),
-                    (SELECT COUNT(*) FROM refinado.transacciones_refinado),
-                    (SELECT COUNT(*) FROM consumo.transacciones_consumo)
+                    (SELECT COUNT(*) FROM raw.items_transaccion_raw)
                 """
             )
-            raw, curated, refined, consumption = cursor.fetchone()
+            transactions, items = cursor.fetchone()
 
     print(
-        "Bootstrap PostgreSQL completado: "
-        f"raw={raw}, curado={curated}, refinado={refined}, consumo={consumption}"
+        "Carga raw completada: "
+        f"transacciones={transactions}, items={items}. "
+        "Ejecutá luego dbt build o scripts/run_quality_checks.py."
     )
 
 

@@ -9,5 +9,7 @@ data_qa_lab:
       user: "{{ env_var('QA_DB_USER', 'qa_user') }}"
       password: "{{ env_var('QA_DB_PASSWORD') }}"
       schema: dbt
-      threads: 4
+      # El lab prioriza una ejecución pedagógica y reproducible sobre la velocidad.
+      # Un solo hilo evita deadlocks al recrear varias vistas en PostgreSQL.
+      threads: 1
       connect_timeout: 10

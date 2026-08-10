@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: stg_transactions
-    description: Vista tipada y renombrada de las transacciones curadas.
+    description: Vista tipada y renombrada de todas las transacciones raw.
     columns:
       - name: transaction_id
         description: Identificador único de la transacción.
@@ -12,15 +12,12 @@ models:
       - name: account_id
         data_tests:
           - not_null
-      - name: transaction_amount
-        data_tests:
-          - not_null
       - name: transaction_date
         data_tests:
           - not_null
 
   - name: stg_transaction_items
-    description: Vista tipada del detalle de productos por transacción.
+    description: Vista tipada de todos los ítems raw.
     columns:
       - name: item_id
         description: Identificador único de la línea de detalle.
@@ -40,3 +37,35 @@ models:
       - name: unit_price
         data_tests:
           - not_null
+
+  - name: stg_accounts
+    description: Cuentas raw normalizadas para validar referencias.
+    columns:
+      - name: account_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: stg_channels
+    description: Canales raw normalizados para validar referencias.
+    columns:
+      - name: channel_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: stg_transaction_statuses
+    description: Estados raw normalizados para validar referencias.
+    columns:
+      - name: status_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: stg_products
+    description: Productos raw normalizados para validar referencias.
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - unique

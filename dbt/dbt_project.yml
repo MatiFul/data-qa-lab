@@ -20,6 +20,11 @@ models:
     staging:
       +materialized: view
       +schema: dbt_staging
+    intermediate:
+      +materialized: view
+      +schema: dbt_intermediate
     marts:
       +materialized: table
       +schema: dbt_marts
+      +grants:
+        select: ["qa_bi_reader"]

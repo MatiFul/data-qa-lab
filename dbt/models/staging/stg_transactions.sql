@@ -7,6 +7,5 @@ select
     monto::numeric(12, 2) as transaction_amount,
     fecha_transaccion::timestamp as transaction_at,
     fecha_transaccion::date as transaction_date,
-    fecha_proceso::date as processed_date,
-    fecha_carga_curado::timestamp as curated_loaded_at
-from {{ source('curado', 'transacciones_curado') }}
+    fecha_proceso::date as processed_date
+from {{ source('raw', 'transacciones_raw') }}

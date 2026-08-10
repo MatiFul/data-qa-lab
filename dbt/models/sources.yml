@@ -1,27 +1,45 @@
 version: 2
 
 sources:
-  - name: curado
-    description: Capa limpia producida por el pipeline PostgreSQL existente.
-    schema: curado
+  - name: raw
+    description: Datos de origen cargados por Airflow sin transformaciones de negocio.
+    schema: raw
     tables:
-      - name: transacciones_curado
-        description: Cabecera de transacciones aceptadas por las reglas de curado.
+      - name: transacciones_raw
+        description: Cabecera de transacciones tal como llega al laboratorio.
         columns:
           - name: id_transaccion
             data_tests:
               - not_null
               - unique
-          - name: monto
-            data_tests:
-              - not_null
-      - name: items_transaccion_curado
-        description: Detalle válido de productos asociado a las transacciones curadas.
+      - name: items_transaccion_raw
+        description: Detalle de productos tal como llega al laboratorio.
         columns:
           - name: id_item
             data_tests:
               - not_null
               - unique
-          - name: id_transaccion
+      - name: cuentas_raw
+        columns:
+          - name: id_cuenta
             data_tests:
               - not_null
+              - unique
+      - name: canales_raw
+        columns:
+          - name: id_canal
+            data_tests:
+              - not_null
+              - unique
+      - name: estados_transaccion_raw
+        columns:
+          - name: id_estado
+            data_tests:
+              - not_null
+              - unique
+      - name: productos_raw
+        columns:
+          - name: id_producto
+            data_tests:
+              - not_null
+              - unique
