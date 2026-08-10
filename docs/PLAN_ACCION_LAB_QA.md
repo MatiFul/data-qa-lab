@@ -4,7 +4,282 @@
 
 ## Objetivo
 
-Construir un laboratorio local y reproducible que permita practicar QA de datos de extremo a extremo: aplicación web, API, PostgreSQL, pipeline ETL/ELT, modelos analíticos, automatización y CI/CD.
+Dejar un laboratorio local, reproducible y orientado al trabajo de Data QA, donde
+sea posible investigar datos manualmente, diseñar casos, automatizarlos, provocar
+fallas controladas, diagnosticar evidencia y volver a validar el flujo completo.
+
+La infraestructura es el escenario de práctica, no el objetivo profesional. El
+lab debe exigir dominio práctico de QA y sólo conocimiento operativo o conceptual
+de arquitectura, administración de plataformas y despliegue.
+
+## Definición vigente de “lab completo” — 9 de agosto de 2026
+
+El lab se considerará completo y listo para quedar en **modo práctica** cuando se
+cumplan todos los puntos obligatorios de este bloque. El historial posterior se
+conserva como evidencia de construcción y recuperación, pero ya no define por sí
+solo el cierre actual.
+
+El cierre se divide en tres hitos acumulativos:
+
+1. **Técnicamente listo:** entorno estable, reproducible y validado.
+2. **Modo práctica:** catálogo de ejercicios y ruta de aprendizaje disponibles.
+3. **Portfolio completo:** repositorios publicados de forma segura, primera CI
+   remota validada y CV actualizado con evidencia defendible.
+
+El laboratorio sólo se marcará como **completo** después del tercer hito. Ninguna
+publicación se realizará antes de la revisión final ni sin autorización explícita
+del usuario en ese momento.
+
+“Portfolio completo” significa una **primera versión pública estable**, no un
+portfolio cerrado. Después de esa base, el laboratorio podrá crecer con escenarios
+de práctica independientes, nuevas automatizaciones y evidencia adicional, sin
+perder una versión demostrable que permanezca siempre en verde.
+
+### Base ya terminada
+
+- [x] Flujo activo único `raw → dbt_staging → dbt_intermediate → dbt_marts`.
+- [x] Quality gate local de dbt y pytest estable.
+- [x] DAG reducido y corrida real con cuatro de cuatro tareas en `success`.
+- [x] API y panel web de sólo lectura sobre `dbt_marts`.
+- [x] Cinco pruebas pytest de API, dos recorridos Playwright y colección
+  Postman/Newman con diez assertions en verde.
+- [x] PostgreSQL, DBeaver, Airflow y OpenMetadata recorridos en la visita guiada.
+- [x] Catálogo de 13 modelos y 25 relaciones de linaje de tablas en OpenMetadata.
+- [x] Documentación técnica, mapa de ejecución, guía introductoria y registro de
+  defectos actualizados para la arquitectura vigente.
+
+### Cierre técnico obligatorio
+
+- [x] Migrar el datadir MySQL de OpenMetadata desde el bind mount de Windows a un
+  volumen nombrado de Docker, preservando y verificando antes un respaldo lógico,
+  para reducir el riesgo de una nueva corrupción InnoDB.
+- [x] Completar una integración representativa de dbt con OpenMetadata: importar
+  descripciones y resultados de pruebas, y documentar linaje por columnas para
+  los campos críticos de `fct_transaction_quality`. No se requiere mapear todas
+  las columnas del catálogo.
+- [x] Dejar preparada la práctica con Postman Desktop: colección y entorno local
+  importables, casos positivos y negativos y comparación con el runner automático.
+  La instalación de la aplicación y la práctica visual se difieren porque ocurren
+  fuera del único directorio autorizado y no bloquean el lab ni la colección v2.1.
+- [x] Preparar el módulo mínimo de QA sobre Power BI: lector de marts, consultas,
+  medidas, visuales especificados y reconciliación automática contra SQL y API.
+  El armado de la página en Desktop queda como práctica manual y no requiere
+  aprender desarrollo avanzado de BI.
+- [x] Unificar la guía de terminal para PowerShell y CMD, incluyendo variables de
+  entorno, uso obligatorio del `.venv`, puertos ocupados y cierre de Uvicorn.
+- [ ] Ejecutar una prueba de reproducibilidad desde servicios detenidos: levantar
+  el núcleo, cargar RAW, construir dbt, ejecutar gates de datos y aplicación,
+  lanzar una corrida Airflow y comprobar el catálogo opcional.
+- [ ] Revisar y registrar localmente los cambios de `data-qa-lab` y `airflow-lab`
+  en commits coherentes, sin publicar GitHub ni descartar cambios previos.
+
+### Cierre pedagógico obligatorio
+
+- [x] Crear una ruta de aprendizaje por herramienta con tres niveles: dominar
+  para Data QA, manejar operativamente y conocer sólo de forma conceptual.
+- [x] Crear un catálogo de prácticas que conecte cada validación manual con su
+  automatización, una falla controlada, la evidencia esperada y su diagnóstico.
+- [x] Incluir errores intermedios y operativos dentro de las prácticas: credencial
+  incorrecta, variable ausente, puerto ocupado, servicio caído, selección o
+  parámetro mal aplicado, error esperado `404/422`, fallo real de datos, fallo de
+  infraestructura y tarea Airflow `upstream_failed`.
+- [x] Preparar un resumen defendible para entrevistas: arquitectura en lenguaje
+  simple, responsabilidades propias de QA, defectos investigados y decisiones.
+
+### Cierre de portfolio obligatorio
+
+- [ ] Auditar qué se publicará: estructura de los repositorios, historial,
+  licencias, README, capturas, archivos generados, respaldos, volúmenes y secretos.
+- [ ] Preparar commits locales finales y decidir la presentación pública de
+  `data-qa-lab` y `airflow-lab`; `om-lab` no debe publicar datos, respaldos ni
+  volúmenes operativos.
+- [ ] Publicar en GitHub sólo después de la aprobación explícita del usuario.
+- [ ] Ejecutar y validar la primera CI remota, incluyendo gates y artefactos que
+  sean seguros y útiles para revisión.
+- [ ] Incorporar el proyecto al CV con una descripción breve, resultados medibles
+  y responsabilidades reales de QA.
+- [ ] Actualizar habilidades/herramientas únicamente con tecnologías que puedan
+  demostrarse mediante el lab y explicarse en entrevista; distinguir uso práctico
+  de conocimiento operativo o conceptual.
+- [ ] Definir la evolución posterior del portfolio: conservar una rama principal
+  estable, desarrollar cada práctica en cambios acotados, registrar evidencia y
+  publicar hitos relevantes mediante versiones o releases comprensibles.
+
+### Validación final obligatoria
+
+- [x] Confirmar nuevamente dbt `PASS=80`, pytest de datos `17 passed / 3 xfailed`,
+  pytest API `5 passed`, Playwright `2 passed` y Postman `10 assertions / 0 failed`.
+- [x] Confirmar una corrida nueva de Airflow con cuatro de cuatro tareas exitosas.
+- [x] Confirmar PostgreSQL disponible y OpenMetadata saludable con la persistencia
+  nueva, catálogo enriquecido y linaje verificable.
+- [x] Confirmar técnicamente la reconciliación SQL ↔ API ↔ panel web y el contrato
+  de lectura preparado para Power BI sobre las métricas seleccionadas. El armado
+  visual del reporte continúa como práctica manual no bloqueante.
+- [x] Validar documentación, mapa interactivo, `git diff --check` y estado final
+  de ambos repositorios.
+
+### No bloquea el cierre
+
+- Instalar Jira o registrar tickets en una plataforma externa.
+- Dominar arquitectura, administración avanzada de Airflow/OpenMetadata,
+  Elasticsearch o MySQL.
+- Implementar todos los patrones futuros de carga, índices, triggers, stored
+  procedures, snapshots y recuperación administrativa de Airflow.
+- Completar linaje columna por columna para todos los modelos o gobierno de datos
+  avanzado con owners, dominios y data products.
+- Actualizar en una práctica de mantenimiento la imagen de ingesta de OpenMetadata
+  antes del fin de soporte de Python 3.10 anunciado para octubre de 2026 y revisar
+  la dependencia obsoleta de `pkg_resources`. Son avisos actuales, no fallas del
+  servicio ni del workflow.
+
+Al completar este bloque no se agregarán más componentes al entorno base. Las
+ideas restantes pasarán a ser escenarios de práctica independientes.
+
+## Secuencia de ejecución por bloques
+
+Cada bloque debe cerrar un resultado coherente y validado. Dentro del bloque se
+aplica el ciclo **diagnosticar → ejecutar → validar → corregir** hasta tres veces
+sobre el mismo impedimento. Si el tercer ciclo no resuelve el objetivo, el bloque
+se cierra como bloqueado con evidencia y una decisión explícita; no se prolonga de
+forma indefinida. Las ideas nuevas se envían al backlog sin ampliar el alcance del
+bloque activo.
+
+### Bloque 1 — Persistencia segura de OpenMetadata
+
+- respaldo lógico nuevo y checksum verificado;
+- migración de MySQL desde bind mount de Windows a volumen Docker nombrado;
+- conservación intacta del directorio anterior como recuperación;
+- restauración, migración oficial y validación de conteos, catálogo, linaje y UI;
+- actualización del defecto técnico y de la guía operativa.
+
+**Cierre:** MySQL, Elasticsearch y OpenMetadata saludables, HTTP 200, 13 modelos
+dbt y 25 relaciones vigentes después de reiniciar sobre la persistencia nueva.
+
+**Estado:** completado el 9 de agosto de 2026. Respaldo y evidencia en
+`om-lab/recovery-backups/20260809_pre_named_volume/BACKUP_MANIFEST.md`.
+
+### Bloque 2 — Catálogo útil y operación clara
+
+- descripciones y resultados dbt representativos en OpenMetadata;
+- linaje de columnas crítico y práctica del explorador general;
+- instrucciones equivalentes para PowerShell y CMD, `.venv`, variables, puertos y
+  cierre de procesos.
+
+**Cierre:** OpenMetadata muestra metadata útil para QA y la operación local no
+depende de recordar qué terminal se está utilizando.
+
+**Estado:** completado el 9 de agosto de 2026. La ingesta oficial desde
+`manifest.json`, `catalog.json` y `run_results.json` catalogó los 67 tests dbt y
+sus resultados; `fct_transaction_quality` muestra 12 pruebas exitosas. Se
+documentaron 15 columnas del fact y 7 del mart diario, y se validaron por API y UI
+3 aristas con 23 mapeos críticos de columnas. El explorador general funciona
+buscando el FQN completo; buscar sólo el nombre corto puede devolver `No data` en
+OpenMetadata 1.12.6. La guía operativa distingue PowerShell de CMD y cubre `.venv`,
+variables, puertos y cierre seguro de Uvicorn.
+
+### Bloque 3 — Superficies de automatización QA
+
+- Postman Desktop preparado con la colección existente;
+- comparación Postman ↔ runner automático;
+- Playwright visible, Inspector y trazas;
+- casos positivos, negativos y errores intermedios diagnosticables.
+
+**Cierre:** cada validación de API/web puede recorrerse manualmente, automatizarse
+y depurarse mediante evidencia visual o reportes.
+
+**Estado:** completado el 9 de agosto de 2026. Se agregó el entorno local
+importable de Postman y el contrato negativo `422`; Newman validó cinco requests y
+diez assertions sin fallas. `scripts/run_playwright_lab.py` ofrece los modos
+`gate`, `headed`, `inspector` y `trace`; la traza real de los dos recorridos se
+generó correctamente y el gate combinado cerró con pytest API `5 passed`,
+Playwright `2 passed` y Newman `10/10`. Postman Desktop no se instaló porque eso
+modificaría Windows fuera del alcance autorizado; sus dos archivos de importación
+quedaron listos para la futura práctica visual.
+
+### Bloque 4 — QA mínimo de Power BI
+
+- conexión de sólo lectura a marts;
+- visuales mínimos de calidad;
+- reconciliación documentada contra SQL, API y panel web.
+
+**Cierre:** las métricas seleccionadas coinciden de extremo a extremo sin exigir
+desarrollo avanzado de BI.
+
+**Estado:** completado técnicamente el 9 de agosto de 2026. Se incorporó un rol
+`qa_bi_reader` con sesión de sólo lectura y sin permisos de escritura sobre marts;
+dbt reaplica sus grants en cada reconstrucción. Quedaron versionadas dos consultas
+Power Query M, seis medidas DAX, la especificación de la página y los casos de
+diagnóstico. La reconciliación real confirmó fact = mart diario = API con 4.825
+transacciones, 200 inconsistentes, 100 sin items y tasa 4,15 %. El armado visual y
+guardado inicial desde Power BI Desktop quedan como práctica manual, porque el
+formato debe ser creado por Desktop y no aporta valor fabricar un PBIX/PBIP opaco
+o no validado desde scripts.
+
+### Bloque 5 — Modo práctica y defensa profesional
+
+- ruta de aprendizaje por niveles;
+- catálogo de ejercicios manual → automático → fallo → diagnóstico → regresión;
+- resumen de arquitectura, responsabilidades QA, defectos y decisiones para
+  entrevistas.
+
+**Cierre:** el entorno deja de ser sólo una demo y queda preparado para prácticas
+repetibles y acumulativas.
+
+**Estado:** completado el 9 de agosto de 2026. `MODO_PRACTICA_DATA_QA.md` organiza
+15 ejercicios en tres niveles y obliga a cerrar cada sesión con diagnóstico,
+recuperación y regresión. Incluye una matriz por herramienta que separa dominio
+Data QA, manejo operativo y conocimiento conceptual. La defensa profesional quedó
+preparada en `DEFENSA_PROFESIONAL_DATA_QA.md` con presentaciones de 30 segundos,
+dos y cinco minutos, límites de responsabilidad, decisiones, cuatro historias
+reales, preguntas de entrevista y afirmaciones respaldadas por evidencia. No se
+ejecutaron las prácticas ni se modificó el CV en este bloque.
+
+### Bloque 6 — Reproducibilidad y aceptación final local
+
+- **6B — Aceptación técnica:** arranque desde servicios detenidos y validación
+  de los gates de datos, API, web, Airflow y OpenMetadata, sin eliminar volúmenes.
+- **6C — Cierre Git local:** revisión de reportes, mapa, cambios y archivos
+  publicables; preparación de commits coherentes sin publicación.
+- **6A — Gobierno documental, al final:** inventario y sincronización con
+  Obsidian usando el estado técnico definitivo. Obsidian queda como fuente de
+  verdad para aprendizaje, conceptos, prácticas y desarrollo profesional; los
+  repositorios conservan código, operación y evidencia técnica.
+
+**Cierre:** todos los criterios locales quedan en verde desde un arranque limpio.
+La secuencia deliberada es `6B → 6C → 6A`, para no sincronizar documentación
+provisional ni duplicar contenido que todavía pueda cambiar durante la aceptación.
+
+**Estado 6B:** completado el 10 de agosto de 2026. Se detuvieron los servicios sin
+eliminar contenedores, redes ni volúmenes y se reconstruyó el flujo desde RAW. dbt
+cerró `PASS=80`, pytest de datos `17 passed / 3 xfailed`, pytest API `5 passed`,
+Playwright `2 passed` y Newman `10/10`. La reconciliación confirmó 4.825
+transacciones aceptadas, 200 inconsistentes, 100 sin items y tasa 4,15 %. Airflow
+ejecutó `manual__2026-08-10T01:54:06.807302+00:00` con cuatro de cuatro tareas en
+`success`. OpenMetadata quedó en HTTP 200 con MySQL, Elasticsearch y servidor
+saludables; la sincronización confirmó 13 modelos dbt activos, 67 tests
+catalogados, 25 relaciones de linaje y 23 mapeos críticos de columnas. El mapa
+interactivo pasó la validación de pestañas, selección, consola, layout normal y
+ancho reducido sin desborde horizontal.
+
+**Estado 6C:** completado localmente el 10 de agosto de 2026, sin `push`. La
+auditoría no encontró JWT, claves privadas, archivos grandes accidentales ni
+enlaces locales rotos; los JSON, YAML y módulos Python pasaron validación de
+sintaxis. Los cambios quedaron separados en los commits de datos `6058f89`,
+automatización y consumidores `0957fc6`, y Airflow `d9f74a7`; la documentación y
+el mapa se agrupan en el commit de cierre del bloque. Ambos repositorios pasan
+`git diff --check`. Los avisos LF/CRLF describen la conversión futura configurada
+por Git y no son errores de whitespace.
+
+### Bloque 7 — Portfolio público y CV
+
+- auditoría de publicación y secretos;
+- aprobación explícita del usuario;
+- GitHub y primera CI remota;
+- actualización del CV y matriz de habilidades con evidencia demostrable;
+- definición de la evolución posterior mediante prácticas versionadas.
+
+**Cierre:** existe una primera versión pública estable y defendible, lista para
+seguir creciendo sin perder su baseline.
 
 ## Stack mínimo acordado
 
@@ -136,7 +411,11 @@ Construir un laboratorio local y reproducible que permita practicar QA de datos 
 
 ## Criterio de finalización
 
-El laboratorio estará completo cuando pueda levantarse de forma reproducible, cargar datos, ejecutar transformaciones, detectar defectos mediante pruebas automatizadas, validar la consistencia entre web/API/base/BI y ejecutar los controles principales desde CI/CD.
+El criterio vigente es el bloque **Definición vigente de “lab completo” — 9 de
+agosto de 2026** ubicado al inicio. El cierre exige reproducibilidad y gates
+locales, una práctica mínima de reconciliación sobre Power BI, materiales de
+práctica y un cierre de portfolio con publicación y primera CI remota verificadas.
+La publicación ocurre al final y requiere autorización explícita.
 
 ## Resultado del relevamiento
 
@@ -145,9 +424,9 @@ El laboratorio estará completo cuando pueda levantarse de forma reproducible, c
 No conviene crear otro laboratorio desde cero. Ya existe una base avanzada en:
 
 ```text
-C:\Users\matia\Desktop\Maty Work\07 QA nuevo\data-qa-lab
-C:\Users\matia\Desktop\Maty Work\07 QA nuevo\airflow-lab
-C:\Users\matia\Desktop\Maty Work\07 QA nuevo\om-lab
+C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab
+C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\airflow-lab
+C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\om-lab
 ```
 
 La estrategia recomendada es recuperar, validar y extender esos repositorios. El valor nuevo debe concentrarse en automatización de QA, dbt, API, Playwright y CI/CD.
@@ -180,9 +459,9 @@ La estrategia recomendada es recuperar, validar y extender esos repositorios. El
 | Node.js y npm | No están instalados ni son necesarios: Playwright usa Python y Newman usa Docker. |
 | Playwright | Instalado en `.venv` con Chromium aislado. |
 | Postman | Colección versionada y ejecutada automáticamente mediante Newman en Docker. |
-| CI/CD | Agregar GitHub Actions cuando las pruebas locales sean estables. |
+| CI/CD | Workflow local preparado; falta publicar los repositorios y validar la primera ejecución remota. |
 | API y web | FastAPI y panel web incorporados sobre `dbt_marts` en modo de sólo lectura. |
-| QA automático | Suite estable e integrada como gate de Airflow; falta incorporarla a CI/CD. |
+| QA automático | Suite estable e integrada como gate de Airflow y del workflow de GitHub Actions. |
 
 ### Restricciones y decisiones
 
@@ -268,7 +547,7 @@ posible corrupción de tablas y foreign keys
 Los artefactos se conservaron en:
 
 ```text
-C:\Users\matia\Desktop\Maty Work\07 QA nuevo\om-lab\recovery-backups\20260725_2205_pre_recovery
+C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\om-lab\recovery-backups\20260725_2205_pre_recovery
 ```
 
 Copias principales:
@@ -373,7 +652,7 @@ Los cuatro `xfail` actuales no son errores técnicos de pytest: representan anom
 Abrir como carpeta:
 
 ```text
-C:\Users\matia\Desktop\Maty Work\07 QA nuevo\data-qa-lab
+C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab
 ```
 
 Seleccionar como intérprete:
@@ -467,7 +746,7 @@ El generador ahora es reproducible y la transformación rechaza montos negativos
 
 ```text
 Ruta:
-C:\Users\matia\Desktop\Maty Work\07 QA nuevo\data-qa-lab\backups\20260726_pre_generator_fix
+C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab\backups\20260726_pre_generator_fix
 
 Archivo:
 qa_lab_pre_generator_fix.dump
@@ -875,9 +1154,10 @@ GET /api/transactions/{transaction_id}
 
 ```text
 pytest API                 5 passed
-suite pytest completa     24 passed, 4 xfailed
+pytest de datos           19 passed, 4 xfailed
+suite completa directa    24 passed, 4 xfailed
 Playwright                 2 passed
-Postman/Newman             4 requests, 8 assertions, 0 failed
+Postman/Newman             5 requests, 10 assertions, 0 failed
 ```
 
 - [x] Crear `requirements-app.txt` con versiones fijas.
@@ -885,7 +1165,8 @@ Postman/Newman             4 requests, 8 assertions, 0 failed
 - [x] Ejecutar la colección Postman con Newman en Docker.
 - [x] Evitar instalar Node.js porque no agrega valor necesario a este alcance.
 - [x] Crear `scripts/run_app_checks.py`.
-- [x] Generar JUnit de Playwright y Newman dentro de `reports/`.
+- [x] Separar el gate de datos del gate de aplicación.
+- [x] Generar JUnit de pytest API, Playwright y Newman dentro de `reports/`.
 - [x] Ampliar GitHub Actions con los controles de API y web.
 - [x] Confirmar que una credencial inválida bloquea el gate.
 - [x] Recuperar el gate con la conexión correcta y dejar los reportes en verde.
@@ -893,6 +1174,126 @@ Postman/Newman             4 requests, 8 assertions, 0 failed
 
 La aplicación se inicia sólo durante el control automático y se detiene al terminar. No depende de Chrome abierto ni modifica los datos.
 
+## Migración al flujo dbt único — 27 de julio de 2026
+
+### Arquitectura
+
+- [x] Definir el flujo objetivo `raw → dbt_staging → dbt_intermediate → dbt_marts`.
+- [x] Cambiar las fuentes dbt para leer directamente desde RAW.
+- [x] Crear seis modelos de staging.
+- [x] Crear cinco modelos intermedios para válidos, rechazados y reglas reutilizables.
+- [x] Conservar el motivo de rechazo de transacciones e ítems.
+- [x] Adaptar los dos marts para depender de `dbt_intermediate`.
+- [x] Reemplazar las reconciliaciones contra la antigua capa `consumo`.
+- [x] Retirar `curado`, `refinado` y `consumo` del pipeline activo.
+- [x] Mover el SQL anterior a `sql/postgres/legacy/` como referencia histórica.
+
+### Quality gates
+
+- [x] Dejar el DAG en cuatro tareas: crear RAW, cargar RAW, ejecutar dbt y ejecutar pytest.
+- [x] Confirmar que pytest sólo se habilita después de un `dbt build` exitoso.
+- [x] Aplicar la misma regla de corte al runner local.
+- [x] Validar dbt: 13 modelos, 67 pruebas, `PASS=80`, `ERROR=0`.
+- [x] Validar pytest de datos: 17 passed, 3 xfailed, 0 failed.
+- [x] Ejecutar el DAG real desde Airflow: 4 de 4 tareas en `success`.
+
+Corrida validada en la aceptación final local:
+
+```text
+manual__2026-08-10T01:54:06.807302+00:00
+create_raw_tables          success
+load_raw_postgres          success
+run_dbt_build              success
+run_pytest_quality_gate    success
+```
+
+Defecto técnico detectado y resuelto:
+
+```text
+manual__2026-07-27T19:23:08.876914+00:00
+run_dbt_build              failed (deadlock ocasional de PostgreSQL)
+run_pytest_quality_gate    upstream_failed
+```
+
+La recreación concurrente de vistas con `threads: 4` podía producir un deadlock.
+Se fijó `threads: 1` en `dbt/profiles.yml`; la corrida validada inmediatamente
+posterior confirmó las cuatro tareas en `success`, y la aceptación final del 10 de
+agosto volvió a confirmarlas después de un arranque desde servicios detenidos.
+
+### OpenMetadata
+
+- [x] Detener la instalación dañada antes de intervenir.
+- [x] Verificar el SHA-256 del respaldo SQL recuperado.
+- [x] Mover el volumen MySQL averiado a `db-data-corrupt-20260727` sin eliminarlo.
+- [x] Inicializar un volumen MySQL limpio y restaurar el respaldo verificado.
+- [x] Ejecutar la migración oficial de OpenMetadata 1.12.6.
+- [x] Confirmar MySQL, Elasticsearch y OpenMetadata Server saludables.
+- [x] Ejecutar manualmente la ingesta de metadata en `success`.
+- [x] Ejecutar manualmente la ingesta de lineage en `success`.
+- [x] Confirmar los 13 modelos dbt nuevos en el catálogo.
+- [x] Marcar como eliminadas en el catálogo las capas antiguas que ya no existen.
+- [x] Confirmar 25 relaciones de linaje activas para el flujo dbt, incluidas las tres dependencias de marts.
+
+### Documentación
+
+- [x] Actualizar README, guía introductoria, guía operativa y mapa técnico.
+- [x] Actualizar el mapa interactivo sin cambiar su estilo aprobado.
+- [x] Mantener el historial anterior claramente separado del estado actual.
+
 ## Próximo paso
 
-La versión 2 local está terminada. Quedan pendientes la publicación de los commits y etiquetas en GitHub y la primera ejecución remota del workflow; ambas acciones externas requieren autorización explícita. Power BI y la validación por otra persona continúan como extensiones posteriores, no como requisitos para comenzar la visita guiada.
+La visita guiada, los bloques 1 a 5 y los bloques técnicos 6B y 6C quedaron
+completados. Continúa el bloque 6A: inventariar y sincronizar con Obsidian el estado
+técnico definitivo, manteniendo allí la fuente de verdad de aprendizaje, conceptos,
+prácticas y desarrollo profesional. Después se conversa el bloque 7 de portfolio y
+CV. Las integraciones visuales de Postman y Power BI continúan identificadas como
+prácticas manuales, no como defectos técnicos.
+## Backlog pedagógico — evolución de patrones de carga y PostgreSQL
+
+Conservar el dataset actual y su recarga completa como escenario base reproducible.
+Incorporar más adelante ejercicios separados y acumulativos, sin mezclar todos los
+patrones en una sola práctica:
+
+- cargas append con lotes de transacciones nuevas y control de duplicados;
+- upsert incremental para altas y modificaciones;
+- historial de versiones, llegadas tardías y reprocesamiento idempotente;
+- trazabilidad por `batch_id`, archivo de origen, fecha y estado del lote;
+- índices simples y compuestos, unicidad y comparación con `EXPLAIN ANALYZE`;
+- triggers de auditoría o historial, incluyendo sus costos y riesgos operativos;
+- stored procedures para procesamiento de lotes y comparación con modelos dbt;
+- ejercicios de full refresh, append, incremental y snapshot conservados como
+  escenarios independientes;
+- simulación controlada de una tarea fallida en Airflow y análisis de `failed`
+  frente a `upstream_failed`;
+- práctica de `Clear` sobre una instancia, primero aislada y después con alcance
+  downstream, verificando qué tareas vuelven a ejecutarse;
+- comparación de los alcances upstream, downstream, past, future y failed antes
+  de confirmar una limpieza;
+- demostración de `Mark success` y `Mark failed` como cambios administrativos de
+  estado que no ejecutan código ni revierten efectos, usando una corrida creada
+  específicamente para la práctica;
+- comprobación de idempotencia y de los datos resultantes después de reejecutar
+  el pipeline desde distintos puntos;
+- diferenciación práctica entre el grafo downstream de Airflow y el grafo de
+  modelos downstream que dbt construye mediante `ref()`.
+- practicar propietarios, dominios y responsabilidades sobre los activos ya
+  enriquecidos en OpenMetadata, sin convertir administración avanzada del catálogo
+  en un requisito del perfil Data QA;
+- estudiar por separado la diferencia entre el lenguaje SQL, sus dialectos y
+  motores —con PostgreSQL como caso práctico— y el rol de compilación de dbt;
+- instalar y explorar Postman Desktop como práctica opcional, importar la
+  colección del lab, ejecutar sus requests manualmente y comparar esa experiencia
+  con Swagger UI y con la ejecución automática de Newman en Docker.
+- al terminar la visita guiada, auditar el laboratorio herramienta por herramienta
+  y separar claramente el núcleo terminado, las integraciones incompletas, las
+  prácticas pendientes y las mejoras opcionales;
+- construir una ruta de aprendizaje enfocada en el perfil Data QA que indique qué
+  conceptos dominar, cuáles conocer de forma operativa y cuáles dejar fuera de
+  alcance en PostgreSQL, SQL, Python, pytest, dbt, Airflow, OpenMetadata, FastAPI,
+  Postman/Newman, Playwright, Docker y Git;
+- relacionar cada comprobación manual realizada durante la visita con su posible
+  automatización y preparar ejemplos concretos que puedan explicarse y defenderse
+  en entrevistas, sin exigir dominar por completo cada herramienta.
+
+Este backlog contiene escenarios de práctica posteriores. No debe ampliar la
+definición de terminado ni retrasar el paso del laboratorio a modo práctica.

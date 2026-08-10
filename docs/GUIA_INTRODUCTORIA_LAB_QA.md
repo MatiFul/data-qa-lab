@@ -26,6 +26,8 @@ En este laboratorio usamos transacciones, cuentas, clientes, productos e ítems.
 
 ## 2. El recorrido de los datos
 
+El recorrido también está disponible en el [mapa interactivo del laboratorio](diagramas/flujo-data-qa.html), con una vista completa y vistas separadas para el flujo general, Airflow y los controles de aplicación.
+
 ```text
 Generador de datos
         |
@@ -127,7 +129,7 @@ Estos nombres no son universales. Una empresa puede usar `bronze/silver/gold`, m
 
 **Qué es:** un sistema de base de datos relacional que guarda información en tablas y permite consultarla con SQL.
 
-**Para qué lo usamos:** almacenar las capas `raw`, `curado`, `refinado` y `consumo`, ejecutar transformaciones y validar datos.
+**Para qué lo usamos:** almacenar `raw` y los modelos `dbt_staging`, `dbt_intermediate` y `dbt_marts`, además de ejecutar las consultas con las que validamos datos.
 
 **Para qué más se usa:** backends de aplicaciones, sistemas transaccionales, reporting, geolocalización y almacenamiento de documentos JSON.
 
@@ -196,7 +198,7 @@ pytest es el coordinador de las pruebas, pero no reemplaza automáticamente toda
 
 **Qué es:** una plataforma para definir tareas, dependencias y horarios de ejecución.
 
-**Para qué la usamos:** ejecutar en orden las cargas y transformaciones del pipeline y disparar pytest como control final de calidad.
+**Para qué la usamos:** cargar RAW, iniciar `dbt build`, esperar su resultado y disparar pytest únicamente si dbt aprobó.
 
 **Para qué más se usa:** pipelines ETL/ELT, tareas batch, machine learning, reportes programados y coordinación de procesos.
 
@@ -246,7 +248,7 @@ Git no es lo mismo que GitHub. Git funciona localmente; GitHub es un servicio qu
 
 **Qué es:** organiza transformaciones SQL como modelos versionados y permite agregar pruebas y documentación.
 
-**Para qué lo usamos:** crear vistas de preparación y tablas analíticas, declarar sus dependencias y ejecutar 33 pruebas antes de permitir que el pipeline continúe.
+**Para qué lo usamos:** crear modelos de preparación, reglas intermedias y tablas analíticas, declarar sus dependencias y ejecutar 67 pruebas dbt antes de permitir que el pipeline continúe.
 
 **Para qué más se usa:** data warehouses, documentación, lineage y CI/CD de transformaciones.
 
@@ -294,7 +296,7 @@ Git no es lo mismo que GitHub. Git funciona localmente; GitHub es un servicio qu
 
 **Qué es:** una aplicación para crear modelos, métricas y dashboards.
 
-**Para qué lo usaremos:** conectar la capa `consumo` y verificar que totales, filtros y agregaciones coincidan con SQL.
+**Para qué lo usaremos:** conectar `dbt_marts` y verificar que totales, filtros y agregaciones coincidan con SQL.
 
 **Para qué más se usa:** análisis de negocio, modelos semánticos, reportes ejecutivos y publicación de tableros.
 
@@ -318,15 +320,15 @@ Un ciclo completo puede verse así:
 
 1. Docker Compose inicia PostgreSQL y Airflow.
 2. Airflow ejecuta SQL para cargar RAW.
-3. Airflow ejecuta las transformaciones hacia curado, refinado y consumo.
-4. dbt construye `dbt_staging` y `dbt_marts` y ejecuta sus pruebas.
+3. Airflow inicia un único `dbt build`.
+4. dbt construye en orden `dbt_staging`, `dbt_intermediate` y `dbt_marts`, y ejecuta sus pruebas.
 5. pytest se conecta a PostgreSQL mediante psycopg.
 6. Cada prueba ejecuta una consulta y compara el resultado con una regla.
 7. Si una regla falla, DBeaver ayuda a investigar las filas involucradas.
 8. OpenMetadata muestra las tablas, columnas y relaciones de lineage.
-9. Power BI consulta la capa de consumo.
+9. Power BI consulta `dbt_marts`.
 10. Git registra los cambios realizados en pruebas y transformaciones.
-10. GitHub Actions podrá repetir las pruebas automáticamente.
+11. GitHub Actions podrá repetir las pruebas automáticamente.
 
 Ejemplo de una regla:
 
@@ -394,7 +396,7 @@ Nuestro dataset tiene anomalías intencionales para practicar:
 - transacciones sin ítems;
 - algunas diferencias entre el monto de cabecera y el calculado desde los ítems.
 
-Las capas confiables aplican reglas adicionales: los montos nulos y negativos permanecen visibles en RAW para practicar detección, pero no pasan a curado.
+Las capas confiables aplican reglas adicionales: los montos nulos y negativos permanecen visibles en RAW para practicar detección, pero `dbt_intermediate` los conserva como rechazados y no los publica en `dbt_marts`.
 
 pytest las marca como `xfail`, abreviatura de **expected failure** o fallo esperado.
 
@@ -410,7 +412,7 @@ En un trabajo real, cada `xfail` debería estar relacionado con un ticket, una d
 ## 9. Carpetas principales
 
 ```text
-07 QA nuevo/
+02 Data QA Lab - Activo/
 |
 |-- data-qa-lab/       Datos, SQL y pruebas pytest
 |   |-- .venv/         Python aislado del proyecto
@@ -426,7 +428,7 @@ En un trabajo real, cada `xfail` debería estar relacionado con un ticket, una d
 
 ## 10. Orden recomendado para aprender
 
-1. Comprender las cuatro capas de PostgreSQL.
+1. Comprender `raw`, `dbt_staging`, `dbt_intermediate` y `dbt_marts`.
 2. Abrir tablas y ejecutar consultas sencillas en DBeaver.
 3. Leer una prueba de `tests/test_raw_quality.py`.
 4. Relacionar su SQL con la regla que valida.
@@ -447,10 +449,14 @@ Airflow básico
 Git básico
 ```
 
-Postman, Playwright y CI/CD ya están conectados al núcleo; Power BI queda para una etapa posterior.
+Postman, Playwright, CI/CD y el contrato de Power BI ya están conectados al núcleo.
+Sus recorridos visuales se conservan como prácticas manuales guiadas. El orden de
+ejercicios y la profundidad necesaria por herramienta están en
+`docs/MODO_PRACTICA_DATA_QA.md`; la preparación para entrevistas está en
+`docs/DEFENSA_PROFESIONAL_DATA_QA.md`.
 
 ## 11. Explicación corta del laboratorio
 
 Si tuvieras que explicárselo a alguien sin experiencia técnica:
 
-> El laboratorio simula el recorrido de datos de una empresa. PostgreSQL guarda la información en distintas etapas, Airflow ejecuta los procesos, Python y pytest comprueban automáticamente que los datos cumplan reglas, DBeaver permite investigar errores, OpenMetadata muestra de dónde vienen los datos y VS Code es el lugar donde escribimos y mantenemos todo. Docker permite ejecutar los componentes de forma aislada y Git conserva el historial de cambios.
+> El laboratorio simula el recorrido de datos de una empresa. PostgreSQL guarda la entrada y los modelos, Airflow coordina el proceso, dbt transforma y prueba los datos, y pytest revisa el resultado integrado. DBeaver ayuda a investigar errores, OpenMetadata muestra de dónde vienen los datos y VS Code es el lugar donde mantenemos todo. Docker ejecuta los componentes de forma aislada y Git conserva el historial de cambios.

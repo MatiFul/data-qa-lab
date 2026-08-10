@@ -377,3 +377,164 @@ pytest 19 passed, 4 xfailed
 **Estado:** cerrado.
 
 Este defecto es un ejemplo de impacto por dependencia: un componente nuevo y correcto —dbt— reveló que una decisión histórica del pipeline no era idempotente ni segura para consumidores posteriores.
+
+## DQA-007 — Airflow recopilaba pruebas de una aplicación no montada
+
+**Regla:** cada gate debe ejecutar únicamente las pruebas y dependencias que pertenecen a su alcance.
+
+**Detección:** durante la revisión del mapa de ejecución de la versión 2 se ejecutó `pytest --collect-only` dentro de `airflow_scheduler`.
+
+**Error observado:**
+
+```text
+tests/api/test_api.py
+ModuleNotFoundError: No module named 'app'
+23 pruebas de datos recopiladas antes del error
+```
+
+**Causa:** Airflow montaba `tests/` completo. Al agregar `tests/api`, comenzó a recopilar las cinco pruebas de aplicación, pero el DAG sólo está diseñado para el gate de datos y no monta `app/`.
+
+**Corrección:**
+
+- Airflow y `run_quality_checks.py` ignoran `tests/api`.
+- `run_app_checks.py` ejecuta las cinco pruebas de API junto con Playwright y Newman.
+- Los reportes quedan separados por responsabilidad.
+
+**Resultado esperado:**
+
+```text
+Gate Airflow/datos      17 passed, 3 xfailed
+Gate aplicación          5 pytest API, 2 Playwright, 10 assertions Newman
+```
+
+**Validación final:** la corrida
+`manual__2026-08-10T01:54:06.807302+00:00` completó las cuatro tareas en
+`success`; el gate de datos ejecutó únicamente su suite prevista.
+
+**Estado:** cerrado.
+
+## DQA-008 — Deadlock ocasional al recrear vistas dbt en paralelo
+
+**Regla:** una corrida completa debe poder recrear los modelos dbt de forma
+determinista sin que la concurrencia técnica interrumpa el quality gate.
+
+**Detección:**
+
+```text
+Corrida: manual__2026-07-27T19:23:08.876914+00:00
+run_dbt_build: failed
+run_pytest_quality_gate: upstream_failed
+```
+
+**Causa:** el perfil dbt utilizaba `threads: 4`; PostgreSQL podía entrar
+ocasionalmente en deadlock al recrear varias vistas en paralelo.
+
+**Corrección:** fijar `threads: 1` en `dbt/profiles.yml`. El pipeline conserva
+el orden interno de dependencias de dbt y elimina la concurrencia que originaba
+la contención.
+
+**Validación:**
+
+```text
+Corrida: manual__2026-07-27T19:28:18.310171+00:00
+create_raw_tables: success
+load_raw_postgres: success
+run_dbt_build: success
+run_pytest_quality_gate: success
+
+Aceptación final desde servicios detenidos:
+manual__2026-08-10T01:54:06.807302+00:00
+4 de 4 tareas: success
+```
+
+**Estado:** cerrado.
+
+## DQA-009 — Corrupción recurrente del tablespace InnoDB de OpenMetadata
+
+**Fecha de detección:** 6 de agosto de 2026.
+
+**Síntoma:** `openmetadata_mysql` entraba en un bucle de reinicio y
+`openmetadata_server` terminaba con `Communications link failure`; la interfaz
+`http://localhost:8585` no estaba disponible.
+
+**Evidencia raíz:** MySQL 8.0.32 abortaba durante la purga con la aserción
+`dict0dict.cc:3452: for_table || ref_table`. El servidor acumuló 45 reinicios.
+El volumen activo es un bind mount de Windows y MySQL informa que el filesystem
+es case-insensitive; esto se registra como factor de riesgo probable, no como
+causa única demostrada.
+
+**Recuperación:** se detuvo el bucle, se preservó una copia física exacta del
+volumen corrupto y se inició temporalmente MySQL con
+`innodb-force-recovery=2`. Se obtuvo un dump lógico fila por fila y se corrigió
+el patrón conocido `VALUES (,...` en 1155 inserts de tablas de extensiones. El
+dump original quedó intacto.
+
+```text
+Backup físico:
+om-lab/recovery-backups/20260806_1700_pre_recovery/db-data-corrupt
+
+Volumen en cuarentena:
+om-lab/docker-volume/db-data-corrupt-20260806
+
+Dump restaurado:
+openmetadata-20260806-rowwise-fixed.sql
+SHA-256: A82D65615F604471A0D3745D9AA5E4CC3FF5E01DF8C9DCDB002DF094CB51EAE5
+```
+
+**Validación:** restauración completa sin errores, migración oficial 1.12.6 con
+código 0, MySQL/Elasticsearch/OpenMetadata Server saludables, HTTP 200 en el
+puerto 8585, 13 modelos dbt activos y 25 relaciones de lineage activas.
+
+**Prevención estructural aplicada — 9 de agosto de 2026:** el datadir activo se
+migró desde el bind mount de Windows al volumen Docker nombrado
+`data-qa-openmetadata-mysql`. Antes del cambio se generó un dump lógico rowwise,
+se preservó el original, se corrigieron 1.198 ocurrencias del patrón conocido
+`VALUES (,...` y se verificó la copia restaurada con SHA-256
+`7F6EBE647E648192D1AC54E0B16BEE0D866791B678E23491D95EADBAEFBEEA2B`.
+
+Después de restaurar se ejecutó la migración oficial con código 0 y un reinicio
+controlado. MySQL, Elasticsearch y OpenMetadata Server quedaron saludables;
+HTTP respondió 200 y se conservaron 168 tablas, 13 modelos dbt activos y 25
+relaciones de lineage. El bind anterior permanece intacto como recuperación.
+
+**Estado:** cerrado; servicio recuperado y prevención estructural aplicada.
+
+## DQA-010 — Catálogo dbt sin resultados ni linaje por columnas útil
+
+**Fecha de detección:** 9 de agosto de 2026.
+
+**Síntoma:** OpenMetadata mostraba los modelos y el linaje entre tablas, pero las
+descripciones estaban incompletas, no había resultados dbt visibles y las aristas
+críticas de `fct_transaction_quality` no mostraban conexiones por columnas.
+
+**Causa:** el catálogo se había poblado con ingestas de PostgreSQL y relaciones
+manuales, pero nunca se había ejecutado el workflow dbt con `manifest.json`,
+`catalog.json` y `run_results.json`. Después de incorporar ese workflow, el parser
+no infirió de forma confiable todas las expresiones derivadas de montos y flags.
+
+**Corrección:** se documentaron en dbt las 15 columnas del fact y las 7 del mart
+diario. `scripts/sync_openmetadata_dbt.py` ejecuta la ingesta oficial sin guardar
+el JWT en Git y completa mediante la API oficial tres aristas críticas con 23
+mapeos de columnas. La operación es repetible e idempotente.
+
+Durante la primera validación el workflow terminó al 100 %, pero el wrapper local
+devolvió error al imprimir el símbolo Unicode `→` bajo la codificación de CMD. Se
+reemplazó por `->`; la ingesta ya realizada no se ocultó ni se revirtió.
+
+**Validación:**
+
+```text
+Workflow dbt: 100 %, 0 errores
+67 tests dbt catalogados
+fct_transaction_quality: 12 de 12 resultados Éxito
+Linaje crítico: 2 aristas upstream + 1 downstream
+Mapeos por columnas: 23
+OpenMetadata Server, MySQL y Elasticsearch: healthy, 0 reinicios
+```
+
+En el explorador general de OpenMetadata 1.12.6, buscar sólo
+`fct_transaction_quality` puede devolver `No data`; el FQN completo
+`postgres_lab.qa_lab.dbt_marts.fct_transaction_quality` sí centra el grafo. La
+guía operativa conserva este comportamiento como diagnóstico conocido.
+
+**Estado:** cerrado.
