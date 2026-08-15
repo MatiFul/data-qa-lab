@@ -67,11 +67,16 @@ perder una versión demostrable que permanezca siempre en verde.
   aprender desarrollo avanzado de BI.
 - [x] Unificar la guía de terminal para PowerShell y CMD, incluyendo variables de
   entorno, uso obligatorio del `.venv`, puertos ocupados y cierre de Uvicorn.
-- [ ] Ejecutar una prueba de reproducibilidad desde servicios detenidos: levantar
+- [x] Ejecutar una prueba de reproducibilidad desde servicios detenidos: levantar
   el núcleo, cargar RAW, construir dbt, ejecutar gates de datos y aplicación,
   lanzar una corrida Airflow y comprobar el catálogo opcional.
-- [ ] Revisar y registrar localmente los cambios de `data-qa-lab` y `airflow-lab`
+- [x] Revisar y registrar localmente los cambios de `data-qa-lab` y `airflow-lab`
   en commits coherentes, sin publicar GitHub ni descartar cambios previos.
+
+Estas dos casillas históricas quedaron verificadas por los cierres fechados **6B**
+y **6C** del 10 de agosto de 2026, documentados más abajo. No incluyen la prueba
+por una segunda persona ni la publicación y CI remotas, que conservan sus propias
+casillas abiertas.
 
 ### Cierre pedagógico obligatorio
 
