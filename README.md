@@ -328,3 +328,7 @@ La versión 3 local está funcional y reproducible:
 - modo práctica preparado con 15 ejercicios y defensa profesional basada en evidencia.
 
 La publicación en GitHub y la primera ejecución remota del workflow requieren una autorización separada.
+
+## Licencia
+
+Este proyecto se distribuye bajo la [licencia MIT](LICENSE).
