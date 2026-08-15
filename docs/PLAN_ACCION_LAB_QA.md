@@ -441,9 +441,9 @@ La publicación ocurre al final y requiere autorización explícita.
 No conviene crear otro laboratorio desde cero. Ya existe una base avanzada en:
 
 ```text
-C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab
-C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\airflow-lab
-C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\om-lab
+<workspace>/data-qa-lab
+<workspace>/airflow-lab
+<workspace>/om-lab
 ```
 
 La estrategia recomendada es recuperar, validar y extender esos repositorios. El valor nuevo debe concentrarse en automatización de QA, dbt, API, Playwright y CI/CD.
@@ -564,7 +564,7 @@ posible corrupción de tablas y foreign keys
 Los artefactos se conservaron en:
 
 ```text
-C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\om-lab\recovery-backups\20260725_2205_pre_recovery
+<workspace>/om-lab/recovery-backups/20260725_2205_pre_recovery
 ```
 
 Copias principales:
@@ -669,7 +669,7 @@ Los cuatro `xfail` actuales no son errores técnicos de pytest: representan anom
 Abrir como carpeta:
 
 ```text
-C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab
+<workspace>/data-qa-lab
 ```
 
 Seleccionar como intérprete:
@@ -763,7 +763,7 @@ El generador ahora es reproducible y la transformación rechaza montos negativos
 
 ```text
 Ruta:
-C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab\backups\20260726_pre_generator_fix
+<workspace>/data-qa-lab/backups/20260726_pre_generator_fix
 
 Archivo:
 qa_lab_pre_generator_fix.dump

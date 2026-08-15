@@ -164,6 +164,11 @@ Postman, Newman y Playwright, están en
 
 ### Airflow
 
+La orquestación vive en el repositorio complementario
+[`airflow-lab`](https://github.com/MatiFul/airflow-lab). Ambos repositorios deben
+clonarse como carpetas hermanas para que los volúmenes relativos del Compose
+encuentren SQL, datos, dbt y pruebas.
+
 Corrida estable más reciente:
 
 ```text

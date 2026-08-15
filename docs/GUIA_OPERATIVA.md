@@ -24,13 +24,13 @@ global, todos los comandos del lab deben usar explícitamente:
 En ambos casos, ubicarse primero en la raíz de `data-qa-lab`. En PowerShell:
 
 ```powershell
-Set-Location "C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab"
+Set-Location "<ruta-del-workspace>\data-qa-lab"
 ```
 
 En CMD:
 
 ```bat
-cd /d "C:\Users\matia\Desktop\Maty Work\02 Data QA Lab - Activo\data-qa-lab"
+cd /d "<ruta-del-workspace>\data-qa-lab"
 ```
 
 ## Qué iniciar según la práctica
