@@ -8,6 +8,9 @@ permisos, origen, medidas, filtros, actualización y reconciliación.
 
 ```text
 powerbi/
+|-- Data QA Lab.pbip
+|-- Data QA Lab.Report/
+|-- Data QA Lab.SemanticModel/
 |-- queries/
 |   |-- fct_transaction_quality.pq
 |   `-- mart_daily_quality.pq
@@ -18,8 +21,10 @@ powerbi/
 `-- README.md
 ```
 
-Las consultas `.pq` son código M listo para pegar en el Editor avanzado de Power
-Query. Las medidas `.dax` son los oráculos del reporte. No contienen contraseñas.
+`Data QA Lab.pbip` abre el proyecto textual y versionable ya construido en Power
+BI Desktop. Las consultas `.pq` y medidas `.dax` se conservan además como fuentes
+legibles y reutilizables. Ninguno de estos activos contiene contraseñas; las
+carpetas locales `.pbi` y `powerbi/local/` están excluidas de Git.
 
 ## Conexión de menor privilegio
 
@@ -41,9 +46,9 @@ La credencial se introduce en Power BI Desktop y queda en el almacenamiento loca
 de la aplicación; no se agrega al reporte ni al repositorio. Es una credencial
 exclusiva del laboratorio local, equivalente a la ya declarada en Docker Compose.
 
-## Construcción visual pendiente para la práctica manual
+## Página visual implementada
 
-Crear una página `QA Overview` de 16:9 con estos elementos:
+La página `QA Overview` de 16:9 contiene:
 
 | Visual | Campo o medida | Oráculo actual |
 |---|---|---:|
@@ -51,10 +56,12 @@ Crear una página `QA Overview` de 16:9 con estos elementos:
 | Tarjeta | `Inconsistent Transactions` | 200 |
 | Tarjeta | `Transactions Without Items` | 100 |
 | Tarjeta | `Inconsistency Rate` | 4,15 % |
-| Líneas | eje `transaction_date`; valores `transaction_count` e `inconsistency_rate` | 90 fechas |
-| Tabla de detalle | ID, montos, diferencia y ambos flags | filtrar `inconsistent_amount_flag = 1` |
+| Columnas y línea | eje `transaction_date`; columnas `transaction_count`; línea `inconsistency_rate` | 90 fechas |
+| Tabla de detalle | ID, fecha, montos, diferencia, cantidad de ítems y ambos flags | 200 filas con `inconsistent_amount_flag = 1` |
 
-Formato recomendado:
+El reporte guarda la tasa como porcentaje, los montos con dos decimales, las
+fechas sin jerarquía automática, títulos orientados a la regla y la fila total de
+la tabla desactivada.
 
 - tasa como porcentaje con dos decimales;
 - montos con dos decimales;
@@ -67,23 +74,19 @@ usan `mart_daily_quality`. No hace falta relacionar ambas tablas para este alcan
 cada una responde una pregunta distinta y la reconciliación controla que sus
 totales coincidan.
 
-## Secuencia de armado en Desktop
+## Apertura y actualización en Desktop
 
 1. Levantar PostgreSQL y ejecutar `dbt build`.
-2. Abrir Power BI Desktop y elegir `Obtener datos > Consulta en blanco`.
-3. Abrir el Editor avanzado y pegar cada archivo `.pq`; nombrar las consultas como
-   sus marts.
-4. Elegir autenticación de base de datos e ingresar `qa_bi_reader`.
-5. Crear las medidas desde `quality_measures.dax`.
-6. Construir los visuales de `QA Overview` y actualizar.
-7. Comparar las cuatro tarjetas con `reports/powerbi/reconciliation.json`.
-8. Guardar primero el binario local bajo `powerbi/local/`, que está excluido de
-   Git. Cuando el reporte esté aprobado, guardarlo como proyecto PBIP versionable
-   dentro de `powerbi/` y revisar el diff antes de publicarlo.
+2. Abrir `powerbi/Data QA Lab.pbip` con Power BI Desktop.
+3. Si Desktop solicita credenciales, elegir autenticación de base de datos e
+   ingresar `qa_bi_reader`; la contraseña queda en el almacén local de Power BI.
+4. Elegir `Actualizar` y comprobar que las cuatro tarjetas muestran los oráculos
+   indicados arriba.
+5. Ejecutar la reconciliación y comparar el reporte con
+   `reports/powerbi/reconciliation.json`.
 
-No se genera un PBIX o PBIP falso desde scripts. Power BI Desktop es quien debe
-crear inicialmente esos formatos; después, el PBIP permite versionar como texto el
-modelo semántico y el reporte.
+Power BI Desktop creó inicialmente el proyecto. El repositorio sólo versiona sus
+definiciones PBIP/PBIR/TMDL; no fabrica un PBIX opaco ni conserva cachés locales.
 
 ## Reconciliación automática
 

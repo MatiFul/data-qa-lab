@@ -1,0 +1,136 @@
+table fct_transaction_quality
+	lineageTag: cbe5c47e-0e27-46b0-9b2c-8448606542b0
+
+	column transaction_id
+		dataType: int64
+		formatString: 0
+		lineageTag: fe6e0a84-fe51-41a3-bd7c-49989ab49e23
+		summarizeBy: none
+		sourceColumn: transaction_id
+
+	column account_id
+		dataType: int64
+		formatString: 0
+		lineageTag: f59f588a-0471-4e07-84ff-daa21b1a7aa6
+		summarizeBy: none
+		sourceColumn: account_id
+
+	column channel_id
+		dataType: int64
+		formatString: 0
+		lineageTag: bac1c41f-30a3-475f-a36a-3d14e95d37b6
+		summarizeBy: none
+		sourceColumn: channel_id
+
+	column status_id
+		dataType: int64
+		formatString: 0
+		lineageTag: b4ba7a42-3a76-4fbe-bef6-0ce927cec274
+		summarizeBy: none
+		sourceColumn: status_id
+
+	column branch_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 74ee3850-30f8-409f-a179-3b91af256aeb
+		summarizeBy: none
+		sourceColumn: branch_id
+
+	column transaction_amount
+		dataType: double
+		formatString: 0.00
+		lineageTag: eed61743-1388-4ed1-846a-6a4686fe8e0b
+		summarizeBy: sum
+		sourceColumn: transaction_amount
+
+	column calculated_item_amount
+		dataType: double
+		formatString: 0.00
+		lineageTag: 7123cf3b-de61-419e-8007-edf97cf99e29
+		summarizeBy: sum
+		sourceColumn: calculated_item_amount
+
+	column amount_difference
+		dataType: double
+		formatString: 0.00
+		lineageTag: 6e4a8e7c-b53a-44e7-b130-e89381554859
+		summarizeBy: sum
+		sourceColumn: amount_difference
+
+	column item_count
+		dataType: int64
+		formatString: 0
+		lineageTag: ab7b40f7-e2e0-4aff-ad48-6c444637b23f
+		summarizeBy: none
+		sourceColumn: item_count
+
+	column has_no_items_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d9ed5d7-405c-4129-8623-b389ba8ff135
+		summarizeBy: none
+		sourceColumn: has_no_items_flag
+
+	column inconsistent_amount_flag
+		dataType: int64
+		formatString: 0
+		lineageTag: d332fbf6-cad1-4ebd-960d-cbe84c98e62f
+		summarizeBy: none
+		sourceColumn: inconsistent_amount_flag
+
+	column transaction_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: ac75c2de-7734-4327-a0e5-29a27fc61101
+		summarizeBy: none
+		sourceColumn: transaction_at
+
+	column transaction_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: e9336383-b66a-4c2c-9d6d-966607b8c7e0
+		summarizeBy: none
+		sourceColumn: transaction_date
+
+	column processed_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: df184dd8-bc45-456a-acff-731fb192a46a
+		summarizeBy: none
+		sourceColumn: processed_date
+
+	partition fct_transaction_quality = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(
+				        "127.0.0.1:5434",
+				        "qa_lab",
+				        [
+				            Query = "
+				                select
+				                    transaction_id,
+				                    account_id,
+				                    channel_id,
+				                    status_id,
+				                    branch_id,
+				                    transaction_amount,
+				                    calculated_item_amount,
+				                    amount_difference,
+				                    item_count,
+				                    has_no_items_flag,
+				                    inconsistent_amount_flag,
+				                    transaction_at,
+				                    transaction_date,
+				                    processed_date
+				                from dbt_marts.fct_transaction_quality
+				            ",
+				            CommandTimeout = #duration(0, 0, 1, 0)
+				        ]
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table

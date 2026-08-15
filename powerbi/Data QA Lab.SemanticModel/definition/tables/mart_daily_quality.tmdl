@@ -1,0 +1,99 @@
+table mart_daily_quality
+	lineageTag: a7b2bbe2-19b3-49c4-aba2-5b5f33aac802
+
+	measure 'Total Transactions' = SUM(mart_daily_quality[transaction_count])
+		formatString: #,0
+		lineageTag: 80a225b7-fe75-4d10-bbf1-2a426fe66466
+
+	measure 'Inconsistent Transactions' = SUM(mart_daily_quality[inconsistent_transactions])
+		formatString: #,0
+		lineageTag: cf212447-3a93-450b-ac54-330ac119e4af
+
+	measure 'Transactions Without Items' = SUM(mart_daily_quality[transactions_without_items])
+		formatString: #,0
+		lineageTag: 8e08bf22-5ec8-4f7e-83e9-512d1015d54c
+
+	measure 'Inconsistency Rate' = DIVIDE([Inconsistent Transactions], [Total Transactions], 0)
+		formatString: 0.00%
+		lineageTag: 9c5e318a-1e32-421a-ad93-92720ae8169d
+
+	column transaction_date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 4250c338-67d4-4b18-80e8-6f665841a886
+		summarizeBy: none
+		sourceColumn: transaction_date
+
+	column transaction_count
+		dataType: int64
+		formatString: 0
+		lineageTag: e5079323-fbd4-4ae6-b751-7588536a4de0
+		summarizeBy: sum
+		sourceColumn: transaction_count
+
+	column total_transaction_amount
+		dataType: double
+		formatString: 0.00
+		lineageTag: b5a2c2e8-f2ca-4179-8a7b-775248b7587f
+		summarizeBy: sum
+		sourceColumn: total_transaction_amount
+
+	column total_calculated_item_amount
+		dataType: double
+		formatString: 0.00
+		lineageTag: b5aa9bc3-c524-41f3-8d9b-cb7b9d23e014
+		summarizeBy: sum
+		sourceColumn: total_calculated_item_amount
+
+	column transactions_without_items
+		dataType: int64
+		formatString: 0
+		lineageTag: f6f3a3a9-f7e8-4e90-8647-c59431289840
+		summarizeBy: sum
+		sourceColumn: transactions_without_items
+
+	column inconsistent_transactions
+		dataType: int64
+		formatString: 0
+		lineageTag: b9a7bba0-33c5-41cd-8bf7-63dd8e543710
+		summarizeBy: sum
+		sourceColumn: inconsistent_transactions
+
+	column inconsistency_rate
+		dataType: double
+		formatString: 0.00%
+		lineageTag: 3ea012df-d566-4f0b-9499-876a3c42c3c5
+		summarizeBy: sum
+		sourceColumn: inconsistency_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_daily_quality = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database(
+				        "127.0.0.1:5434",
+				        "qa_lab",
+				        [
+				            Query = "
+				                select
+				                    transaction_date,
+				                    transaction_count,
+				                    total_transaction_amount,
+				                    total_calculated_item_amount,
+				                    transactions_without_items,
+				                    inconsistent_transactions,
+				                    inconsistency_rate
+				                from dbt_marts.mart_daily_quality
+				                order by transaction_date
+				            ",
+				            CommandTimeout = #duration(0, 0, 1, 0)
+				        ]
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table

@@ -59,11 +59,11 @@ perder una versión demostrable que permanezca siempre en verde.
   las columnas del catálogo.
 - [x] Dejar preparada la práctica con Postman Desktop: colección y entorno local
   importables, casos positivos y negativos y comparación con el runner automático.
-  La instalación de la aplicación y la práctica visual se difieren porque ocurren
-  fuera del único directorio autorizado y no bloquean el lab ni la colección v2.1.
+  La aplicación quedó instalada y su Runner confirmó cinco requests y diez
+  assertions; los ejercicios autónomos permanecen en el modo práctica.
 - [x] Preparar el módulo mínimo de QA sobre Power BI: lector de marts, consultas,
   medidas, visuales especificados y reconciliación automática contra SQL y API.
-  El armado de la página en Desktop queda como práctica manual y no requiere
+  La página `QA Overview` quedó construida como PBIP versionable y no requiere
   aprender desarrollo avanzado de BI.
 - [x] Unificar la guía de terminal para PowerShell y CMD, incluyendo variables de
   entorno, uso obligatorio del `.venv`, puertos ocupados y cierre de Uvicorn.
@@ -113,8 +113,8 @@ perder una versión demostrable que permanezca siempre en verde.
 - [x] Confirmar PostgreSQL disponible y OpenMetadata saludable con la persistencia
   nueva, catálogo enriquecido y linaje verificable.
 - [x] Confirmar técnicamente la reconciliación SQL ↔ API ↔ panel web y el contrato
-  de lectura preparado para Power BI sobre las métricas seleccionadas. El armado
-  visual del reporte continúa como práctica manual no bloqueante.
+  de lectura preparado para Power BI sobre las métricas seleccionadas. El PBIP
+  visual conserva los mismos oráculos y un detalle filtrado reproducible.
 - [x] Validar documentación, mapa interactivo, `git diff --check` y estado final
   de ambos repositorios.
 
@@ -187,14 +187,16 @@ variables, puertos y cierre seguro de Uvicorn.
 **Cierre:** cada validación de API/web puede recorrerse manualmente, automatizarse
 y depurarse mediante evidencia visual o reportes.
 
-**Estado:** completado el 9 de agosto de 2026. Se agregó el entorno local
+**Estado:** completado técnicamente el 9 de agosto y recorrido visualmente el 15
+de agosto de 2026. Se agregó el entorno local
 importable de Postman y el contrato negativo `422`; Newman validó cinco requests y
 diez assertions sin fallas. `scripts/run_playwright_lab.py` ofrece los modos
 `gate`, `headed`, `inspector` y `trace`; la traza real de los dos recorridos se
 generó correctamente y el gate combinado cerró con pytest API `5 passed`,
-Playwright `2 passed` y Newman `10/10`. Postman Desktop no se instaló porque eso
-modificaría Windows fuera del alcance autorizado; sus dos archivos de importación
-quedaron listos para la futura práctica visual.
+Playwright `2 passed` y Newman `10/10`. En la introducción guiada, Postman Desktop
+ejecutó también cinco requests y diez assertions desde Runner; Playwright se
+recorrió en Chrome visible, Inspector y Trace Viewer. La práctica autónoma queda
+separada para el modo práctica.
 
 ### Bloque 4 — QA mínimo de Power BI
 
@@ -205,15 +207,16 @@ quedaron listos para la futura práctica visual.
 **Cierre:** las métricas seleccionadas coinciden de extremo a extremo sin exigir
 desarrollo avanzado de BI.
 
-**Estado:** completado técnicamente el 9 de agosto de 2026. Se incorporó un rol
+**Estado:** completado técnicamente el 9 de agosto y visualmente el 15 de agosto de
+2026. Se incorporó un rol
 `qa_bi_reader` con sesión de sólo lectura y sin permisos de escritura sobre marts;
 dbt reaplica sus grants en cada reconstrucción. Quedaron versionadas dos consultas
-Power Query M, seis medidas DAX, la especificación de la página y los casos de
+Power Query M, cuatro medidas DAX, la especificación de la página y los casos de
 diagnóstico. La reconciliación real confirmó fact = mart diario = API con 4.825
-transacciones, 200 inconsistentes, 100 sin items y tasa 4,15 %. El armado visual y
-guardado inicial desde Power BI Desktop quedan como práctica manual, porque el
-formato debe ser creado por Desktop y no aporta valor fabricar un PBIX/PBIP opaco
-o no validado desde scripts.
+transacciones, 200 inconsistentes, 100 sin items y tasa 4,15 %. Power BI Desktop
+creó y validó el proyecto textual `powerbi/Data QA Lab.pbip`: cuatro tarjetas,
+volumen y tasa por día, y detalle de las 200 transacciones con flag inconsistente.
+El repositorio excluye el caché `.pbi` y las credenciales locales.
 
 ### Bloque 5 — Modo práctica y defensa profesional
 
@@ -410,8 +413,8 @@ seguir creciendo sin perder su baseline.
 
 ## Fase 8 — BI, metadatos y portfolio
 
-- [ ] Conectar Power BI a los modelos analíticos.
-- [ ] Validar métricas y agregaciones contra SQL.
+- [x] Conectar Power BI a los modelos analíticos.
+- [x] Validar métricas y agregaciones contra SQL.
 - [x] Integrar OpenMetadata si aporta valor al laboratorio.
 - [x] Documentar casos de prueba.
 - [x] Documentar defectos encontrados y evidencia.
@@ -1253,8 +1256,9 @@ agosto volvió a confirmarlas después de un arranque desde servicios detenidos.
 
 La visita guiada y los bloques locales 1 a 6 quedaron completados. El próximo paso
 es conversar y decidir el bloque 7 de portfolio público y CV antes de publicar o
-modificar perfiles profesionales. Las integraciones visuales de Postman y Power BI
-continúan identificadas como prácticas manuales, no como defectos técnicos.
+modificar perfiles profesionales. Las introducciones guiadas de Postman Desktop,
+Playwright y Power BI quedaron completadas; los ejercicios autónomos pertenecen al
+modo práctica y no son defectos técnicos.
 ## Backlog pedagógico — evolución de patrones de carga y PostgreSQL
 
 Conservar el dataset actual y su recarga completa como escenario base reproducible.
@@ -1288,9 +1292,8 @@ patrones en una sola práctica:
   en un requisito del perfil Data QA;
 - estudiar por separado la diferencia entre el lenguaje SQL, sus dialectos y
   motores —con PostgreSQL como caso práctico— y el rol de compilación de dbt;
-- instalar y explorar Postman Desktop como práctica opcional, importar la
-  colección del lab, ejecutar sus requests manualmente y comparar esa experiencia
-  con Swagger UI y con la ejecución automática de Newman en Docker.
+- diseñar casos nuevos en Postman Desktop y comparar su ejecución manual con
+  Swagger UI y con Newman, partiendo de la introducción guiada ya completada;
 - al terminar la visita guiada, auditar el laboratorio herramienta por herramienta
   y separar claramente el núcleo terminado, las integraciones incompletas, las
   prácticas pendientes y las mejoras opcionales;

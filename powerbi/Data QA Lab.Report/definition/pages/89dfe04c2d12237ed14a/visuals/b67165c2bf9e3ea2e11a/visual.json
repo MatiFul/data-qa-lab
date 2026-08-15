@@ -1,0 +1,340 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "b67165c2bf9e3ea2e11a",
+  "position": {
+    "x": 0,
+    "y": 480,
+    "z": 4001,
+    "height": 229.41176470588235,
+    "width": 1280,
+    "tabOrder": 4001
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "transaction_id"
+                }
+              },
+              "queryRef": "fct_transaction_quality.transaction_id",
+              "nativeQueryRef": "transaction_id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "transaction_date"
+                }
+              },
+              "queryRef": "fct_transaction_quality.transaction_date",
+              "nativeQueryRef": "transaction_date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "transaction_amount"
+                }
+              },
+              "queryRef": "Sum(fct_transaction_quality.transaction_amount)",
+              "nativeQueryRef": "transaction_amount"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "calculated_item_amount"
+                }
+              },
+              "queryRef": "Sum(fct_transaction_quality.calculated_item_amount)",
+              "nativeQueryRef": "calculated_item_amount"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "amount_difference"
+                }
+              },
+              "queryRef": "Sum(fct_transaction_quality.amount_difference)",
+              "nativeQueryRef": "amount_difference"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "item_count"
+                }
+              },
+              "queryRef": "fct_transaction_quality.item_count",
+              "nativeQueryRef": "item_count"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "has_no_items_flag"
+                }
+              },
+              "queryRef": "fct_transaction_quality.has_no_items_flag",
+              "nativeQueryRef": "has_no_items_flag"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fct_transaction_quality"
+                    }
+                  },
+                  "Property": "inconsistent_amount_flag"
+                }
+              },
+              "queryRef": "fct_transaction_quality.inconsistent_amount_flag",
+              "nativeQueryRef": "inconsistent_amount_flag"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "fct_transaction_quality"
+                  }
+                },
+                "Property": "inconsistent_amount_flag"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Detalle de transacciones inconsistentes'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "2c4e8cadc778defffee2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "transaction_id"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "8913cab69f75fb310576",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "transaction_date"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "93db0ad672c9d601a2ff",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "item_count"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "1d0bdef5238dc0f4ec99",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "has_no_items_flag"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c8197c03cfadf712be50",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "inconsistent_amount_flag"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "fct_transaction_quality",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 0,
+                  "Left": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "f"
+                        }
+                      },
+                      "Property": "inconsistent_amount_flag"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "1L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "26ba7abf2bb1af875c9f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "transaction_amount"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "bc64d09bdd9212e831fc",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "calculated_item_amount"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "beab3a22fd553ab766d7",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "fct_transaction_quality"
+              }
+            },
+            "Property": "amount_difference"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

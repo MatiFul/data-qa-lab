@@ -1,0 +1,164 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "87d35d17d64f68e82be7",
+  "position": {
+    "x": 0,
+    "y": 200,
+    "z": 4000,
+    "height": 280,
+    "width": 1280,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "lineClusteredColumnComboChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_daily_quality"
+                    }
+                  },
+                  "Property": "transaction_date"
+                }
+              },
+              "queryRef": "mart_daily_quality.transaction_date",
+              "nativeQueryRef": "transaction_date",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "mart_daily_quality"
+                        }
+                      },
+                      "Property": "transaction_count"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(mart_daily_quality.transaction_count)",
+              "nativeQueryRef": "Suma de transaction_count"
+            }
+          ]
+        },
+        "Y2": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_daily_quality"
+                    }
+                  },
+                  "Property": "Inconsistency Rate"
+                }
+              },
+              "queryRef": "mart_daily_quality.Inconsistency Rate",
+              "nativeQueryRef": "Inconsistency Rate"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "mart_daily_quality"
+                  }
+                },
+                "Property": "transaction_date"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Volumen y tasa de inconsistencias por día'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "2fd72779711d8d22a5fc",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "mart_daily_quality"
+              }
+            },
+            "Property": "transaction_date"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "68a43513575ca9f1a07a",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "mart_daily_quality"
+              }
+            },
+            "Property": "Inconsistency Rate"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "d2a4c4f673424593b5ad",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "mart_daily_quality"
+                  }
+                },
+                "Property": "transaction_count"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

@@ -278,9 +278,10 @@ fact = mart diario = API
 lector sin permisos de escritura
 ```
 
-Las consultas M, medidas DAX, visuales mínimos y casos de diagnóstico están en
-`powerbi/README.md`. La construcción de la página en Desktop se reserva para la
-práctica manual; la fuente, los oráculos y el gate ya quedan preparados.
+El proyecto versionable se abre desde `powerbi/Data QA Lab.pbip`. Las consultas M,
+medidas DAX, visuales implementados y casos de diagnóstico están explicados en
+`powerbi/README.md`. El gate automático valida los oráculos; Desktop permite
+refrescar y examinar la presentación visual.
 
 ## Abrir la aplicación para explorarla
 

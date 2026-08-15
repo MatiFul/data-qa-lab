@@ -21,5 +21,9 @@ tmp/
 temp/
 powerbi/local/
 
+# Postman Desktop local workspace metadata
+postman/.postman/
+postman/postman/
+
 *.csv
 *.zip

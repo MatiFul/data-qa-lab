@@ -65,8 +65,10 @@ La explicación técnica y su equivalente cotidiano están desarrollados en `doc
 
 Power BI dispone de un módulo mínimo orientado a QA en `powerbi/`: conexión
 real de sólo lectura, consultas M, medidas DAX y reconciliación automática contra
-los marts y la API. El armado visual en Desktop queda como práctica manual guiada,
-no como nueva responsabilidad de desarrollo BI.
+los marts y la API. El proyecto versionable `powerbi/Data QA Lab.pbip` incluye la
+página `QA Overview`, cuatro tarjetas, la evolución diaria y el detalle filtrado de
+inconsistencias. Su construcción fue un recorrido guiado de familiarización, no
+una nueva responsabilidad de desarrollo BI.
 
 ## Dataset controlado
 
@@ -152,9 +154,9 @@ GET /api/transactions/{transaction_id}
 La interfaz web usa esos mismos endpoints. La colección Postman contiene cinco
 requests y diez assertions, incluidos los contratos negativos `404` y `422`.
 Newman ejecuta automáticamente ese mismo archivo. La colección y el entorno local
-ya están listos para importarse en Postman Desktop cuando se habilite su instalación
-fuera del directorio del proyecto. Playwright automatiza dos recorridos sobre
-Chromium y conserva evidencia ante fallos.
+fueron importados y ejecutados también en Postman Desktop: cinco requests y diez
+assertions pasaron desde su Runner. Playwright automatiza dos recorridos sobre
+Chromium o Chrome y conserva evidencia ante fallos.
 
 Los modos visual, Inspector y trazas, junto con la comparación entre Swagger,
 Postman, Newman y Playwright, están en
@@ -311,6 +313,7 @@ La versión 3 local está funcional y reproducible:
 - Airflow validado con éxito y fallo controlado;
 - API de sólo lectura y panel web incorporados;
 - Postman/Newman y Playwright integrados con cero fallas;
+- proyecto Power BI versionable y reconciliado con SQL y API;
 - reportes persistentes disponibles;
 - CI/CD preparado localmente;
 - OpenMetadata 1.12.6 recuperado sobre volumen nombrado y enriquecido desde los

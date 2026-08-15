@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "89dfe04c2d12237ed14a",
+  "displayName": "QA Overview",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}
